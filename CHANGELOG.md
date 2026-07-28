@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.3.0] - 2026-07-29
+
+### Integrated & Connected
+- **Centralized Network Client**: Added `ApiService` (`lib/src/core/network/api_service.dart`) with automatic JWT bearer token header injection.
+- **Mobile Repositories Layer**: Added `PetsRepository`, `AIRepository`, `CollarRepository`, and `RescueRepository` (`lib/src/core/repositories/`) connecting Flutter screens to live DRF APIs.
+- **Screen-to-API Mappings**: Mapped all Flutter UI screens to backend endpoints.
+- **Integration Documentation Suite**: Added `docs/MOBILE_API_MAPPING.md`, `docs/ANDROID_TEST_REPORT.md`, `docs/AUTHENTICATION_REPORT.md`, `docs/BACKEND_INTEGRATION_REPORT.md`, and `docs/APK_RELEASE_GUIDE.md`.
+
 ## [2.2.0] - 2026-07-29
 
 ### Added & Connected
