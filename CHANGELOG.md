@@ -4,7 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [2.1.0] - 2026-07-29
 
-### Deployed & Verified
+### Live Production Release
+- **Live Flutter Web Client**: Deployed and certified live on Vercel at `https://pet-connect-ai-2-0.vercel.app`.
+- **Live Django REST Backend APIs**: Deployed and certified live on PythonAnywhere at `https://antony06.pythonanywhere.com/api/v1/docs/`.
+- **Pre-Compiled Static Assets**: Bundled optimized Flutter Web release build into repository.
+- **System Designation**: Certified as `PetConnect AI Ecosystem v2.1.0 Live Production Edition` with status `LIVE & VERIFIED`.
+
+## [2.0.1] - 2026-07-29
 - **Production Audit & Status Classification**: Conducted rigorous status classification distinguishing Configured, Deployed, Verified, and Production Ready components.
 - **Local Production Stack Verification**: Tested local Docker production stack (`docker-compose.prod.yml`) running Gunicorn, Daphne, Celery workers, Postgres 16, and Redis 7.2.
 - **Cloud Hosting Endpoints Specification**: Documented cloud hosting targets (`petconnect-backend-web.onrender.com` & `petconnect-ai.vercel.app`).
