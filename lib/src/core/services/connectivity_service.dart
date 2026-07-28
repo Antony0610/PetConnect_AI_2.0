@@ -1,33 +1,21 @@
 import 'dart:async';
-import '../observability/app_logger.dart';
 
-/// Connectivity Monitoring Service for PetConnect AI Ecosystem
+/// Offline & Network Connectivity Monitor Service
 class ConnectivityService {
+  final _controller = StreamController<bool>.broadcast();
   bool _isOnline = true;
-  final StreamController<bool> _connectivityController = StreamController<bool>.broadcast();
 
-  ConnectivityService() {
-    // Initial state check
-    _checkConnectivity();
-  }
-
+  Stream<bool> get onConnectivityChanged => _controller.stream;
   bool get isOnline => _isOnline;
-  Stream<bool> get onConnectivityChanged => _connectivityController.stream;
 
-  void _checkConnectivity() {
-    _isOnline = true;
-    AppLogger.info('🌐 Connectivity Service initialized: Device is ONLINE');
-  }
-
-  void setOnlineStatus(bool status) {
-    if (_isOnline != status) {
-      _isOnline = status;
-      _connectivityController.add(_isOnline);
-      AppLogger.info(_isOnline ? '🟢 Device back ONLINE' : '🔴 Device OFFLINE - Sync Queue Active');
+  void updateStatus(bool online) {
+    if (_isOnline != online) {
+      _isOnline = online;
+      _controller.add(_isOnline);
     }
   }
 
   void dispose() {
-    _connectivityController.close();
+    _controller.close();
   }
 }

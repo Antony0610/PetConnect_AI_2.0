@@ -5,10 +5,12 @@ All notable changes to this project will be documented in this file.
 ## [2.2.0] - 2026-07-29
 
 ### Added & Connected
+- **Native Android Manifest Hardening**: Updated `android/app/src/main/AndroidManifest.xml` with Camera, Location (GPS), Bluetooth (Smart Collar), and FCM Notification permissions.
+- **Offline & Connectivity Monitoring**: Added `ConnectivityService` (`lib/src/core/services/connectivity_service.dart`) for offline status detection.
+- **FCM Push Notification Service**: Added `FCMNotificationService` (`lib/src/core/services/fcm_notification_service.dart`) for emergency SOS alerts and vaccination reminders.
 - **Flutter JWT Auth Integration**: Added `AuthRepository` (`lib/src/features/auth/data/auth_repository.dart`) connecting Flutter frontend directly to live Django REST APIs.
-- **Secure Token Storage**: Added `SecureTokenStorage` (`lib/src/core/services/secure_token_storage.dart`) for JWT Access/Refresh token handling and session persistence.
-- **Role-Based Routing Guards**: Updated `LoginScreen` to perform live JWT authentication, error handling, progress indicators, and automated role-based navigation.
-- **Authentication Documentation**: Added `docs/AUTHENTICATION_GUIDE.md`, `docs/USER_MANAGEMENT_GUIDE.md`, `docs/JWT_FLOW.md`, and `docs/AUTH_TEST_REPORT.md`.
+- **Secure Token Storage**: Added `SecureTokenStorage` (`lib/src/core/services/secure_token_storage.dart`) for JWT Access/Refresh token handling.
+- **Mobile Documentation Suite**: Added `docs/MOBILE_SETUP_GUIDE.md`, `docs/AUTHENTICATION_FLOW.md`, `docs/EMAIL_VERIFICATION_GUIDE.md`, `docs/ANDROID_DEPLOYMENT_GUIDE.md`, `docs/PUSH_NOTIFICATION_GUIDE.md`, and `docs/API_INTEGRATION_GUIDE.md`.
 
 ## [2.1.0] - 2026-07-29
 
