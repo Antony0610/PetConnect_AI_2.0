@@ -30,7 +30,7 @@ class PetVitalsCard extends StatelessWidget {
     return GlassContainer(
       padding: AppSpacing.paddingMd,
       child: Column(
-        crossAxisAlignment: CrossAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -68,7 +68,7 @@ class PetVitalsCard extends StatelessWidget {
           ),
           AppSpacing.gapMd,
           Row(
-            crossAxisAlignment: CrossAlignment.baseline,
+            crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
               Text(

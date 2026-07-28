@@ -22,15 +22,15 @@ class AIInsightBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.all(1.5), // Subtle gradient border
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
         gradient: AppColors.aiGlowGradient,
-        padding: const EdgeInsets.all(1.5), // Subtle gradient border
       ),
       child: GlassContainer(
         borderRadius: AppSpacing.radiusLg - 1.5,
         child: Column(
-          crossAxisAlignment: CrossAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [

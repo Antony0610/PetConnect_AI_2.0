@@ -24,7 +24,7 @@ class PetOwnerDashboardScreen extends StatelessWidget {
             ),
             AppSpacing.gapSm,
             Column(
-              crossAxisAlignment: CrossAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Luna (Golden Retriever)', style: AppTypography.titleLarge(context)),
                 Text('Smart Collar Connected • 94% Battery', style: AppTypography.labelLarge(context)),
@@ -47,7 +47,7 @@ class PetOwnerDashboardScreen extends StatelessWidget {
       body: SingleChildScrollView(
         padding: AppSpacing.paddingLg,
         child: Column(
-          crossAxisAlignment: CrossAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AIInsightBanner(
               title: 'AI Vitals Diagnostic Normal',
@@ -173,7 +173,7 @@ class PetOwnerDashboardScreen extends StatelessWidget {
       child: GlassContainer(
         padding: AppSpacing.paddingMd,
         child: Column(
-          crossAxisAlignment: CrossAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, color: color, size: 28),

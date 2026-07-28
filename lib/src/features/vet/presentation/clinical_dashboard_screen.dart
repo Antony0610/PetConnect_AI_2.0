@@ -15,7 +15,7 @@ class ClinicalDashboardScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Column(
-          crossAxisAlignment: CrossAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Veterinarian Clinical Hub'),
             Text('Metro Pet Hospital • Dr. Sarah Jenkins', style: TextStyle(fontSize: 12)),
@@ -31,7 +31,7 @@ class ClinicalDashboardScreen extends StatelessWidget {
       body: SingleChildScrollView(
         padding: AppSpacing.paddingLg,
         child: Column(
-          crossAxisAlignment: CrossAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
@@ -83,7 +83,7 @@ class ClinicalDashboardScreen extends StatelessWidget {
   Widget _buildMetricTile(BuildContext context, String label, String value, IconData icon, Color color) {
     return GlassContainer(
       child: Column(
-        crossAxisAlignment: CrossAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(icon, color: color, size: 28),
           AppSpacing.gapSm,
@@ -115,7 +115,7 @@ class ClinicalDashboardScreen extends StatelessWidget {
             AppSpacing.gapMd,
             Expanded(
               child: Column(
-                crossAxisAlignment: CrossAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(petName, style: AppTypography.titleLarge(context)),
                   Text(ownerName, style: AppTypography.labelLarge(context)),
@@ -124,7 +124,7 @@ class ClinicalDashboardScreen extends StatelessWidget {
               ),
             ),
             Column(
-              crossAxisAlignment: CrossAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(time, style: AppTypography.monoData(context)),
                 const SizedBox(height: 4),

@@ -15,7 +15,7 @@ class ProfileSetupScreen extends StatelessWidget {
       body: Padding(
         padding: AppSpacing.paddingLg,
         child: Column(
-          crossAxisAlignment: CrossAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Complete Your Profile', style: AppTypography.headlineLarge(context)),
             AppSpacing.gapXs,

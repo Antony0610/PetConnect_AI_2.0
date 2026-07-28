@@ -24,7 +24,7 @@ class AdminCommandCenterScreen extends StatelessWidget {
       body: SingleChildScrollView(
         padding: AppSpacing.paddingLg,
         child: Column(
-          crossAxisAlignment: CrossAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Platform Telemetry', style: AppTypography.headlineMedium(context)),
             AppSpacing.gapMd,
@@ -94,7 +94,7 @@ class AdminCommandCenterScreen extends StatelessWidget {
   Widget _buildMetricCard(BuildContext context, String title, String value, IconData icon, Color color) {
     return GlassContainer(
       child: Column(
-        crossAxisAlignment: CrossAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(icon, color: color, size: 24),
           AppSpacing.gapSm,

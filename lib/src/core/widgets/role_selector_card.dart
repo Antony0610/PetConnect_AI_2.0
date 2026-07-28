@@ -56,7 +56,7 @@ class RoleSelectorCard extends StatelessWidget {
               AppSpacing.gapMd,
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,

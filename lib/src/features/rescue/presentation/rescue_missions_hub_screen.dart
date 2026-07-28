@@ -16,7 +16,7 @@ class RescueMissionsHubScreen extends StatelessWidget {
         children: [
           GlassContainer(
             child: Column(
-              crossAxisAlignment: CrossAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [

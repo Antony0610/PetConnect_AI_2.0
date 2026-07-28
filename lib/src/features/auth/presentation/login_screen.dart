@@ -23,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Padding(
         padding: AppSpacing.paddingLg,
         child: Column(
-          crossAxisAlignment: CrossAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Welcome Back', style: AppTypography.headlineLarge(context)),
             AppSpacing.gapXs,

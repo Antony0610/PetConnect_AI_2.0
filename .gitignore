@@ -28,6 +28,7 @@ env/
 venv/
 ENV/
 build/
+!build/web/
 dist/
 *.egg-info/
 .coverage

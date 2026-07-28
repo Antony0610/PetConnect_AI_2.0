@@ -62,7 +62,7 @@ class LiveTrackingScreen extends StatelessWidget {
                   AppSpacing.gapMd,
                   const Expanded(
                     child: Column(
-                      crossAxisAlignment: CrossAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('Geofence Alert Active', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
                         Text('Automatic broadcast to nearby rescuers if breached.', style: TextStyle(fontSize: 12, color: Colors.white70)),

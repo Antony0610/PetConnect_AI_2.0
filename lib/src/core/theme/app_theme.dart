@@ -81,7 +81,7 @@ abstract class AppTheme {
         outlineVariant: AppColors.lightOutlineVariant,
       ),
       scaffoldBackgroundColor: AppColors.lightBackground,
-      cardTheme: CardThemeData(
+      cardTheme: CardTheme(
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
@@ -133,7 +133,7 @@ abstract class AppTheme {
         outlineVariant: AppColors.darkOutlineVariant,
       ),
       scaffoldBackgroundColor: AppColors.darkBackground,
-      cardTheme: CardThemeData(
+      cardTheme: CardTheme(
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusLg),

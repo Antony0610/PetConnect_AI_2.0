@@ -59,7 +59,7 @@ class _InteractiveAIChatScreenState extends State<InteractiveAIChatScreen> {
                       padding: AppSpacing.paddingMd,
                       borderRadius: AppSpacing.radiusLg,
                       child: Column(
-                        crossAxisAlignment: CrossAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           if (isAi)
                             Row(

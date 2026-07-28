@@ -24,7 +24,7 @@ class _SmartCollarSetupScreenState extends State<SmartCollarSetupScreen> {
       body: SingleChildScrollView(
         padding: AppSpacing.paddingLg,
         child: Column(
-          crossAxisAlignment: CrossAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             GlassContainer(
               padding: AppSpacing.paddingLg,

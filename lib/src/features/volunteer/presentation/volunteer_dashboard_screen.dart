@@ -24,7 +24,7 @@ class VolunteerDashboardScreen extends StatelessWidget {
       body: SingleChildScrollView(
         padding: AppSpacing.paddingLg,
         child: Column(
-          crossAxisAlignment: CrossAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             GlassContainer(
               padding: AppSpacing.paddingLg,
@@ -38,7 +38,7 @@ class VolunteerDashboardScreen extends StatelessWidget {
                   AppSpacing.gapMd,
                   Expanded(
                     child: Column(
-                      crossAxisAlignment: CrossAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('Rescue Worker #V-402', style: AppTypography.titleLarge(context)),
                         Text('Active Squad: Central Shelter Rescuers', style: AppTypography.bodyMedium(context)),
@@ -109,7 +109,7 @@ class VolunteerDashboardScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
       child: GlassContainer(
         child: Column(
-          crossAxisAlignment: CrossAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

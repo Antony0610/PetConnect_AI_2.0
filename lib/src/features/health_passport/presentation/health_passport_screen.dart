@@ -20,7 +20,7 @@ class HealthPassportScreen extends StatelessWidget {
       body: SingleChildScrollView(
         padding: AppSpacing.paddingLg,
         child: Column(
-          crossAxisAlignment: CrossAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             GlassContainer(
               padding: AppSpacing.paddingLg,
@@ -34,7 +34,7 @@ class HealthPassportScreen extends StatelessWidget {
                   AppSpacing.gapMd,
                   Expanded(
                     child: Column(
-                      crossAxisAlignment: CrossAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('Luna', style: AppTypography.headlineMedium(context)),
                         Text('Canine • Golden Retriever • 3 yrs 2 mos', style: AppTypography.bodyMedium(context)),
@@ -103,7 +103,7 @@ class HealthPassportScreen extends StatelessWidget {
             AppSpacing.gapMd,
             Expanded(
               child: Column(
-                crossAxisAlignment: CrossAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(title, style: AppTypography.titleLarge(context)),
                   const SizedBox(height: 2),
