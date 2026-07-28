@@ -58,12 +58,13 @@ services:
           name: petconnect-redis
           property: connectionString
 
+  # Redis Key-Value Store
+  - type: redis
+    name: petconnect-redis
+    plan: starter
+
 databases:
   - name: petconnect-postgres
     databaseName: petconnect_prod_db
     user: petconnect_admin
-    plan: starter
-
-redis:
-  - name: petconnect-redis
     plan: starter
