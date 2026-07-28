@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.0] - 2026-07-29
+
+### Deployed
+- **Render Production Blueprint**: Added `backend/render.yaml` configuring Gunicorn WSGI Web Service, Daphne ASGI Service, Celery Workers, Managed Postgres, and Managed Redis.
+- **Render Auto-Build Script**: Added `backend/render_build.sh` executing migrations and WhiteNoise static asset collection.
+- **Vercel Hosting Setup**: Added `vercel.json` for Flutter Web single-page app hosting.
+- **Production Hardening**: Updated `backend/config/settings/prod.py` with `DATABASE_URL` parsing, WhiteNoise middleware, and HTTPS security headers.
+- **Deployment Documentation**: Added `docs/DEPLOYMENT_GUIDE.md`, `docs/HOSTING_GUIDE.md`, `docs/PRODUCTION_CHECKLIST.md`, and `docs/ROLLBACK_GUIDE.md`.
+
 ## [1.1.4] - 2026-07-29
 
 ### Released

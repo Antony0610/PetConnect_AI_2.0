@@ -1,0 +1,69 @@
+services:
+  # Django WSGI Web Service (Gunicorn + REST APIs)
+  - type: web
+    name: petconnect-backend-web
+    env: python
+    buildCommand: "./render_build.sh"
+    startCommand: "gunicorn -c config/gunicorn.conf.py config.wsgi:application"
+    plan: starter
+    healthCheckPath: /api/v1/health/readiness/
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.prod
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: DATABASE_URL
+        fromDatabase:
+          name: petconnect-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: petconnect-redis
+          property: connectionString
+
+  # Daphne ASGI Service (Channels & Real-Time WebSockets)
+  - type: web
+    name: petconnect-backend-daphne
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "daphne -b 0.0.0.0 -p $PORT config.asgi:application"
+    plan: starter
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.prod
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: petconnect-redis
+          property: connectionString
+
+  # Celery Background Worker
+  - type: worker
+    name: petconnect-celery-worker
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "celery -A config worker -l info --concurrency=4"
+    plan: starter
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.prod
+      - key: DATABASE_URL
+        fromDatabase:
+          name: petconnect-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: petconnect-redis
+          property: connectionString
+
+databases:
+  - name: petconnect-postgres
+    databaseName: petconnect_prod_db
+    user: petconnect_admin
+    plan: starter
+
+redis:
+  - name: petconnect-redis
+    plan: starter
