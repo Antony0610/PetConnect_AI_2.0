@@ -1,4 +1,4 @@
-# Android Release Build & Play Store Deployment Guide (v2.2.0)
+# Android Release Build & Play Store Deployment Guide (v2.3.0)
 
 Step-by-step guide for generating signed **Release APK** and **Android App Bundle (AAB)**.
 
