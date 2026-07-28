@@ -62,6 +62,7 @@ services:
   - type: redis
     name: petconnect-redis
     plan: starter
+    ipAllowList: []
 
 databases:
   - name: petconnect-postgres
