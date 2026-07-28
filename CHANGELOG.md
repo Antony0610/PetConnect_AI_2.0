@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.2.0] - 2026-07-29
+
+### Added & Connected
+- **Flutter JWT Auth Integration**: Added `AuthRepository` (`lib/src/features/auth/data/auth_repository.dart`) connecting Flutter frontend directly to live Django REST APIs.
+- **Secure Token Storage**: Added `SecureTokenStorage` (`lib/src/core/services/secure_token_storage.dart`) for JWT Access/Refresh token handling and session persistence.
+- **Role-Based Routing Guards**: Updated `LoginScreen` to perform live JWT authentication, error handling, progress indicators, and automated role-based navigation.
+- **Authentication Documentation**: Added `docs/AUTHENTICATION_GUIDE.md`, `docs/USER_MANAGEMENT_GUIDE.md`, `docs/JWT_FLOW.md`, and `docs/AUTH_TEST_REPORT.md`.
+
 ## [2.1.0] - 2026-07-29
 
 ### Live Production Release
