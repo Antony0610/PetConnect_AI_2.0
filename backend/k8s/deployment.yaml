@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: petconnect-backend-deployment
+  namespace: petconnect-production
+  labels:
+    app.kubernetes.io/name: petconnect-backend
+    app.kubernetes.io/version: "1.1.0"
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: petconnect-backend
+  template:
+    metadata:
+      labels:
+        app: petconnect-backend
+    spec:
+      containers:
+        - name: petconnect-web
+          image: registry.petconnect.ai/petconnect-backend:v1.1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+              name: http
+          envFrom:
+            - configMapRef:
+                name: petconnect-config
+            - secretRef:
+                name: petconnect-secrets
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "2000m"
+              memory: "2048Mi"
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health/readiness/
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health/liveness/
+              port: 8000
+            initialDelaySeconds: 20
+            periodSeconds: 15
+          startupProbe:
+            httpGet:
+              path: /api/v1/health/startup/
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: petconnect-celery-worker
+  namespace: petconnect-production
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: petconnect-celery
+  template:
+    metadata:
+      labels:
+        app: petconnect-celery
+    spec:
+      containers:
+        - name: celery-worker
+          image: registry.petconnect.ai/petconnect-backend:v1.1.0
+          command: ["celery", "-A", "config", "worker", "-l", "info", "--concurrency=8"]
+          envFrom:
+            - configMapRef:
+                name: petconnect-config
+            - secretRef:
+                name: petconnect-secrets
