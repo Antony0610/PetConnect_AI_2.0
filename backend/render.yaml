@@ -5,7 +5,7 @@ services:
     env: python
     buildCommand: "./render_build.sh"
     startCommand: "gunicorn -c config/gunicorn.conf.py config.wsgi:application"
-    plan: starter
+    plan: free
     healthCheckPath: /api/v1/health/readiness/
     envVars:
       - key: DJANGO_SETTINGS_MODULE
@@ -28,7 +28,7 @@ services:
     env: python
     buildCommand: "pip install -r requirements.txt"
     startCommand: "daphne -b 0.0.0.0 -p $PORT config.asgi:application"
-    plan: starter
+    plan: free
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: config.settings.prod
@@ -44,7 +44,7 @@ services:
     env: python
     buildCommand: "pip install -r requirements.txt"
     startCommand: "celery -A config worker -l info --concurrency=4"
-    plan: starter
+    plan: free
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: config.settings.prod
@@ -61,11 +61,11 @@ services:
   # Redis Key-Value Store
   - type: redis
     name: petconnect-redis
-    plan: starter
+    plan: free
     ipAllowList: []
 
 databases:
   - name: petconnect-postgres
     databaseName: petconnect_prod_db
     user: petconnect_admin
-    plan: starter
+    plan: free
