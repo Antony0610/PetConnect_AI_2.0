@@ -129,7 +129,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         curve: Curves.easeInOut,
                       );
                     } else {
-                      context.go(AppRoutes.roleSelection);
+                      context.go(AppRoutes.login);
                     }
                   },
                   child: Text(_currentIndex == _pages.length - 1 ? 'Get Started' : 'Next'),
