@@ -8,6 +8,7 @@ from .models import (
     SmartCollarPairingHistory,
     SmartCollarTelemetryHistory,
     SmartCollarGeofenceEvent,
+    SmartCollarOtaRollbackLog,
     DeviceStatusChoices,
 )
 from apps.pets.models import Pet
