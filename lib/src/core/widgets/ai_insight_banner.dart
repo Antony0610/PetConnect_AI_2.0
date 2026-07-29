@@ -4,7 +4,7 @@ import '../constants/app_spacing.dart';
 import '../constants/app_typography.dart';
 import 'glass_container.dart';
 
-/// Reusable AI Diagnostic & Symptom Analysis Banner
+/// Reusable AI Diagnostic & Symptom Analysis Banner with warm handcrafted styling
 class AIInsightBanner extends StatelessWidget {
   final String title;
   final String description;
@@ -22,37 +22,49 @@ class AIInsightBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(1.5), // Subtle gradient border
+      padding: const EdgeInsets.all(1.5),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+        borderRadius: BorderRadius.circular(20),
         gradient: AppColors.aiGlowGradient,
       ),
       child: GlassContainer(
-        borderRadius: AppSpacing.radiusLg - 1.5,
+        borderRadius: 18.5,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                const Icon(Icons.auto_awesome, color: AppColors.secondaryCyan, size: 20),
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondaryContainer.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.auto_awesome, color: AppColors.secondaryContainer, size: 18),
+                ),
                 AppSpacing.gapSm,
-                Text(
-                  title,
-                  style: AppTypography.titleLarge(context).copyWith(
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Text(
+                    title,
+                    style: AppTypography.titleLarge(context).copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
-                const Spacer(),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryTeal.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
+                    color: AppColors.secondaryContainer.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: AppColors.secondaryContainer.withOpacity(0.4)),
                   ),
                   child: Text(
-                    'AI Match: $confidenceScore',
-                    style: AppTypography.labelLarge(context).copyWith(
-                      color: AppColors.secondaryCyan,
+                    'RAG Match $confidenceScore',
+                    style: const TextStyle(
+                      color: AppColors.secondaryContainer,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -61,7 +73,7 @@ class AIInsightBanner extends StatelessWidget {
             AppSpacing.gapSm,
             Text(
               description,
-              style: AppTypography.bodyMedium(context),
+              style: AppTypography.bodyMedium(context).copyWith(color: Colors.white70),
             ),
             if (onTapAction != null) ...[
               AppSpacing.gapSm,
@@ -69,8 +81,8 @@ class AIInsightBanner extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: TextButton.icon(
                   onPressed: onTapAction,
-                  icon: const Icon(Icons.arrow_forward_ios, size: 14),
-                  label: const Text('View Full Diagnosis'),
+                  icon: const Icon(Icons.arrow_forward_ios, size: 12, color: AppColors.secondaryCyan),
+                  label: const Text('Consult AI Assistant', style: TextStyle(color: AppColors.secondaryCyan, fontWeight: FontWeight.bold)),
                 ),
               ),
             ]

@@ -4,7 +4,7 @@ import '../constants/app_spacing.dart';
 import '../constants/app_typography.dart';
 import 'glass_container.dart';
 
-/// Reusable Pet Vitals Card Widget displaying real-time telemetry
+/// Reusable Pet Vitals Card Widget displaying real-time telemetry with organic pet-inspired styling
 class PetVitalsCard extends StatelessWidget {
   final String title;
   final String value;
@@ -29,6 +29,7 @@ class PetVitalsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlassContainer(
       padding: AppSpacing.paddingMd,
+      borderRadius: 20.0,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -40,28 +41,45 @@ class PetVitalsCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: accentColor.withOpacity(0.15),
-                      borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+                      color: accentColor.withOpacity(0.18),
+                      shape: BoxShape.circle,
                     ),
                     child: Icon(icon, color: accentColor, size: 20),
                   ),
                   AppSpacing.gapSm,
-                  Text(title, style: AppTypography.titleLarge(context)),
+                  Text(title, style: AppTypography.titleLarge(context).copyWith(fontWeight: FontWeight.w600)),
                 ],
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: (isAlert ? AppColors.errorRed : AppColors.successGreen).withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
-                ),
-                child: Text(
-                  statusText,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: isAlert ? AppColors.errorRed : AppColors.successGreen,
+                  color: (isAlert ? AppColors.tertiaryCoral : AppColors.successGreen).withOpacity(0.18),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: (isAlert ? AppColors.tertiaryCoral : AppColors.successGreen).withOpacity(0.3),
                   ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isAlert ? AppColors.tertiaryCoral : AppColors.successGreen,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      statusText,
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: isAlert ? AppColors.tertiaryCoral : AppColors.successGreen,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -75,15 +93,15 @@ class PetVitalsCard extends StatelessWidget {
                 value,
                 style: AppTypography.monoData(
                   context,
-                  fontSize: 28,
+                  fontSize: 30,
                   fontWeight: FontWeight.bold,
-                  color: isAlert ? AppColors.errorRed : accentColor,
+                  color: isAlert ? AppColors.tertiaryCoral : accentColor,
                 ),
               ),
               const SizedBox(width: 4),
               Text(
                 unit,
-                style: AppTypography.bodyMedium(context),
+                style: AppTypography.bodyMedium(context).copyWith(color: Colors.white70),
               ),
             ],
           ),
