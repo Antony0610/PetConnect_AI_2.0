@@ -144,8 +144,8 @@ abstract class AppTheme {
       extensions: const [
         GlassmorphismThemeExtension(
           blurAmount: 20.0,
-          fillOverlayColor: Color(0x800B1C30),
-          borderStrokeColor: Color(0x336BD8CB),
+          fillOverlayColor: Color(0x801A2321),
+          borderStrokeColor: Color(0x33147B6A),
         ),
       ],
     );
