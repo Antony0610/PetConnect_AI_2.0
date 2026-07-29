@@ -1,17 +1,28 @@
-# PetConnect AI Ecosystem 🐾🤖 (v1.1.4 Public Release Edition)
+# PetConnect AI Ecosystem 🐾🤖 (v3.0.0 Official Release Edition)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-teal.svg)](LICENSE)
 [![Flutter](https://img.shields.io/badge/Flutter-3.22.0-02569B?logo=flutter)](https://flutter.dev)
 [![Django](https://img.shields.io/badge/Django-5.0.0-092E20?logo=django)](https://djangoproject.com)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16.0-4169E1?logo=postgresql)](https://postgresql.org)
 [![Redis](https://img.shields.io/badge/Redis-7.2-DC382D?logo=redis)](https://redis.io)
-[![Kubernetes](https://img.shields.io/badge/Kubernetes-Native-326CE5?logo=kubernetes)](https://kubernetes.io)
-[![OpenAPI 3.0](https://img.shields.io/badge/OpenAPI-3.0-green.svg)](docs/SYSTEM_ARCHITECTURE.md)
-[![Status](https://img.shields.io/badge/Status-Public%20Release-success.svg)](#)
+[![Status](https://img.shields.io/badge/Status-Production%20Release-success.svg)](#)
 
 > **Enterprise-Grade, Cloud-Native, Medical PetCare Ecosystem & Smart IoT Telemetry Platform**
 
 **PetConnect AI** is a state-of-the-art, full-stack pet healthcare, AI diagnostic vision scanner, smart IoT collar telemetry tracker, emergency stray rescue dispatch network, and clinical veterinary ecosystem. Built using an offline-first **Flutter 3.22 Mobile Application** paired with a high-concurrency **Django 5 / Celery / Channels Backend**.
+
+---
+
+## 📚 Essential Documentation
+
+- 📄 [User Operating Manual](docs/USER_MANUAL.md)
+- 🔌 [REST API Reference](docs/API_REFERENCE.md)
+- 🏛️ [System Architecture & Diagrams](docs/ARCHITECTURE.md)
+- 🛠️ [Installation Guide](docs/INSTALLATION.md)
+- 🚀 [Deployment Guide](docs/DEPLOYMENT.md)
+- 🎓 [B.Tech Thesis Paper](docs/THESIS_SUPPORT_DOCUMENT.md)
+- 📋 [Viva Preparation Q&A](docs/PRESENTATION_VIVA_PREPARATION.md)
+- 🎬 [Live Demonstration Script](docs/DEMONSTRATION_SCRIPT.md)
 
 ---
 
@@ -63,13 +74,11 @@ Access OpenAPI 3.0 Swagger UI: `http://localhost:8000/api/v1/docs/`
 ```
 PetConnect_AI_2.0/
 ├── backend/                   # Django 5 REST Backend
-│   ├── apps/                  # 13 Modular Domain Apps
+│   ├── apps/                  # Modular Domain Apps
 │   ├── config/                # Settings, ASGI, WSGI, Tracing
-│   ├── k8s/                   # Kubernetes Manifests
 │   └── tests/                 # Complete Test Suite
 ├── lib/                       # Flutter 3.22 App Source
-├── docs/                      # Technical Documentation & Architecture
-├── .github/                   # CI/CD Workflows & Community Templates
+├── docs/                      # Essential Technical Documentation
 ├── README.md                  # Master README
 ├── LICENSE                    # MIT License
 └── CHANGELOG.md               # Version History
