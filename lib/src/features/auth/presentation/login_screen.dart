@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final role = result['role'] ?? 'pet_owner';
       switch (role) {
         case 'vet':
-          context.go(AppRoutes.clinicalDashboard);
+          context.go(AppRoutes.vetDashboard);
           break;
         case 'volunteer':
           context.go(AppRoutes.volunteerDashboard);

@@ -4,7 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [2.3.0] - 2026-07-29
 
-### Integrated & Connected
+### Master Flutter Upgrade Specification
+- **Specification Documentation Suite**: Added `docs/APPLICATION_AUDIT.md`, `docs/FEATURE_GAP_ANALYSIS.md`, `docs/SCREEN_HIERARCHY.md`, `docs/USER_FLOW.md`, `docs/DESIGN_SYSTEM.md`, `docs/COMPONENT_LIBRARY.md`, `docs/UI_IMPROVEMENT_REPORT.md`, `docs/NAVIGATION_ARCHITECTURE.md`, and `docs/RESPONSIVE_DESIGN_REPORT.md`.
+- **Centralized Network Client**: Added `ApiService` (`lib/src/core/network/api_service.dart`) with automatic JWT bearer token header injection.
+- **Mobile Repositories Layer**: Added `PetsRepository`, `AIRepository`, `CollarRepository`, and `RescueRepository` (`lib/src/core/repositories/`) connecting Flutter screens to live DRF APIs.
+- **Screen-to-API Mappings**: Mapped all Flutter UI screens to backend endpoints.
+
+## [2.2.0] - 2026-07-29
 - **Centralized Network Client**: Added `ApiService` (`lib/src/core/network/api_service.dart`) with automatic JWT bearer token header injection.
 - **Mobile Repositories Layer**: Added `PetsRepository`, `AIRepository`, `CollarRepository`, and `RescueRepository` (`lib/src/core/repositories/`) connecting Flutter screens to live DRF APIs.
 - **Screen-to-API Mappings**: Mapped all Flutter UI screens to backend endpoints.
