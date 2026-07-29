@@ -6,8 +6,15 @@ import '../../../core/constants/app_typography.dart';
 import '../../../core/routing/app_router.dart';
 import '../../../core/widgets/glass_container.dart';
 
-class VolunteerDashboardScreen extends StatelessWidget {
+class VolunteerDashboardScreen extends StatefulWidget {
   const VolunteerDashboardScreen({super.key});
+
+  @override
+  State<VolunteerDashboardScreen> createState() => _VolunteerDashboardScreenState();
+}
+
+class _VolunteerDashboardScreenState extends State<VolunteerDashboardScreen> {
+  bool _isOnDuty = true;
 
   @override
   Widget build(BuildContext context) {
@@ -26,30 +33,80 @@ class VolunteerDashboardScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Volunteer Profile & Duty Toggle Card
             GlassContainer(
               padding: AppSpacing.paddingLg,
-              child: Row(
+              child: Column(
                 children: [
-                  const CircleAvatar(
-                    radius: 28,
-                    backgroundColor: AppColors.tertiaryCoral,
-                    child: Icon(Icons.volunteer_activism, size: 30, color: Colors.white),
+                  Row(
+                    children: [
+                      const CircleAvatar(
+                        radius: 28,
+                        backgroundColor: AppColors.tertiaryCoral,
+                        child: Icon(Icons.volunteer_activism, size: 30, color: Colors.white),
+                      ),
+                      AppSpacing.gapMd,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Rescue Worker #V-402', style: AppTypography.titleLarge(context)),
+                            Text('Active Squad: Central Shelter Rescuers', style: AppTypography.bodyMedium(context)),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  AppSpacing.gapMd,
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Rescue Worker #V-402', style: AppTypography.titleLarge(context)),
-                        Text('Active Squad: Central Shelter Rescuers', style: AppTypography.bodyMedium(context)),
-                        Text('Total Rescues Assisted: 42', style: AppTypography.labelLarge(context)),
-                      ],
-                    ),
+                  AppSpacing.gapLg,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            _isOnDuty ? Icons.check_circle : Icons.do_not_disturb_on,
+                            color: _isOnDuty ? AppColors.successGreen : Colors.grey,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            _isOnDuty ? 'ON DUTY • Dispatch Ready' : 'OFF DUTY • Standby',
+                            style: TextStyle(
+                              color: _isOnDuty ? AppColors.successGreen : Colors.grey,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Switch(
+                        value: _isOnDuty,
+                        activeColor: AppColors.successGreen,
+                        onChanged: (v) {
+                          setState(() => _isOnDuty = v);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(v ? 'Status set to ON DUTY' : 'Status set to OFF DUTY')),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
             AppSpacing.gapLg,
+
+            // Live Metrics Counter Row
+            Row(
+              children: [
+                Expanded(child: _buildStatCard(context, '3 Active', 'Incidents Nearby', Icons.warning_amber, AppColors.errorRed)),
+                AppSpacing.gapMd,
+                Expanded(child: _buildStatCard(context, '42', 'Rescues Completed', Icons.verified, AppColors.primaryTeal)),
+                AppSpacing.gapMd,
+                Expanded(child: _buildStatCard(context, '15m', 'Avg Response Time', Icons.speed, AppColors.secondaryCyan)),
+              ],
+            ),
+            AppSpacing.gapLg,
+
             Text('Quick Rescue Dispatch', style: AppTypography.headlineMedium(context)),
             AppSpacing.gapMd,
             Row(
@@ -104,7 +161,27 @@ class VolunteerDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAlertCard(BuildContext context, {required String title, required String location, required String time, required String status}) {
+  Widget _buildStatCard(BuildContext context, String value, String label, IconData icon, Color color) {
+    return GlassContainer(
+      padding: AppSpacing.paddingSm,
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 22),
+          const SizedBox(height: 4),
+          Text(value, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: color)),
+          Text(label, style: const TextStyle(fontSize: 10, color: Colors.white70), textAlign: TextAlign.center),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAlertCard(
+    BuildContext context, {
+    required String title,
+    required String location,
+    required String time,
+    required String status,
+  }) {
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
       child: GlassContainer(
@@ -112,22 +189,21 @@ class VolunteerDashboardScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(title, style: AppTypography.titleLarge(context)),
+                const Icon(Icons.notifications_active, color: AppColors.tertiaryCoral),
+                AppSpacing.gapSm,
+                Text(title, style: AppTypography.titleMedium(context)),
+                const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: AppColors.tertiaryCoral.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(status, style: const TextStyle(color: AppColors.tertiaryCoral, fontSize: 12, fontWeight: FontWeight.bold)),
+                  decoration: BoxDecoration(color: AppColors.tertiaryCoral.withOpacity(0.2), borderRadius: BorderRadius.circular(4)),
+                  child: Text(status, style: const TextStyle(color: AppColors.tertiaryCoral, fontSize: 10, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),
-            const SizedBox(height: 4),
-            Text(location, style: AppTypography.bodyMedium(context)),
-            Text(time, style: AppTypography.labelLarge(context)),
+            AppSpacing.gapSm,
+            Text(location, style: AppTypography.bodySmall(context)),
+            Text(time, style: AppTypography.labelSmall(context)),
           ],
         ),
       ),
