@@ -2,11 +2,37 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_typography.dart';
+import '../../../core/repositories/pets_repository.dart';
 import '../../../core/widgets/glass_container.dart';
 import '../../../core/widgets/status_chip.dart';
 
-class HealthPassportScreen extends StatelessWidget {
+class HealthPassportScreen extends StatefulWidget {
   const HealthPassportScreen({super.key});
+
+  @override
+  State<HealthPassportScreen> createState() => _HealthPassportScreenState();
+}
+
+class _HealthPassportScreenState extends State<HealthPassportScreen> {
+  final PetsRepository _petsRepository = PetsRepository();
+  Map<String, dynamic> _passportData = {};
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadHealthPassport();
+  }
+
+  Future<void> _loadHealthPassport() async {
+    final data = await _petsRepository.getHealthPassport('pet_001');
+    if (mounted) {
+      setState(() {
+        _passportData = data;
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,72 +43,74 @@ class HealthPassportScreen extends StatelessWidget {
           IconButton(icon: const Icon(Icons.share), onPressed: () {}),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: AppSpacing.paddingLg,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            GlassContainer(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
               padding: AppSpacing.paddingLg,
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const CircleAvatar(
-                    radius: 32,
-                    backgroundColor: AppColors.primaryTeal,
-                    child: Icon(Icons.pets, size: 36, color: Colors.white),
-                  ),
-                  AppSpacing.gapMd,
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  GlassContainer(
+                    padding: AppSpacing.paddingLg,
+                    child: Row(
                       children: [
-                        Text('Luna', style: AppTypography.headlineMedium(context)),
-                        Text('Canine • Golden Retriever • 3 yrs 2 mos', style: AppTypography.bodyMedium(context)),
-                        Text('Microchip ID: 985141002938102', style: AppTypography.labelLarge(context)),
+                        const CircleAvatar(
+                          radius: 32,
+                          backgroundColor: AppColors.primaryTeal,
+                          child: Icon(Icons.pets, size: 36, color: Colors.white),
+                        ),
+                        AppSpacing.gapMd,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Luna', style: AppTypography.headlineMedium(context)),
+                              Text('Canine • Golden Retriever • 3 yrs 2 mos', style: AppTypography.bodyMedium(context)),
+                              Text('Microchip ID: 985141002938102', style: AppTypography.labelLarge(context)),
+                            ],
+                          ),
+                        ),
+                        const StatusChip(label: 'Verified EHR', type: StatusType.success),
                       ],
                     ),
                   ),
-                  const StatusChip(label: 'Verified EHR', type: StatusType.success),
+                  AppSpacing.gapLg,
+                  Text('Vaccination History', style: AppTypography.headlineMedium(context)),
+                  AppSpacing.gapMd,
+                  _buildRecordItem(
+                    context,
+                    title: 'Rabies 3-Year Vaccine',
+                    date: 'Administered: Jan 15, 2025 • Expires: Jan 15, 2028',
+                    vet: 'Dr. Sarah Jenkins, DVM',
+                    isVerified: true,
+                  ),
+                  _buildRecordItem(
+                    context,
+                    title: 'DHPP Core Booster',
+                    date: 'Administered: Nov 10, 2024 • Expires: Nov 10, 2025',
+                    vet: 'Dr. Sarah Jenkins, DVM',
+                    isVerified: true,
+                  ),
+                  _buildRecordItem(
+                    context,
+                    title: 'Bordetella Oral Vaccine',
+                    date: 'Administered: Jun 02, 2024 • Expires: Jun 02, 2025',
+                    vet: 'Metro Pet Care Clinic',
+                    isVerified: true,
+                  ),
+                  AppSpacing.gapLg,
+                  Text('Medical & Surgery Ledger', style: AppTypography.headlineMedium(context)),
+                  AppSpacing.gapMd,
+                  _buildRecordItem(
+                    context,
+                    title: 'Routine Dental Scaling & Polish',
+                    date: 'Performed: Aug 14, 2024',
+                    vet: 'Metro Pet Care Clinic',
+                    isVerified: true,
+                  ),
                 ],
               ),
             ),
-            AppSpacing.gapLg,
-            Text('Vaccination History', style: AppTypography.headlineMedium(context)),
-            AppSpacing.gapMd,
-            _buildRecordItem(
-              context,
-              title: 'Rabies 3-Year Vaccine',
-              date: 'Administered: Jan 15, 2025 • Expires: Jan 15, 2028',
-              vet: 'Dr. Sarah Jenkins, DVM',
-              isVerified: true,
-            ),
-            _buildRecordItem(
-              context,
-              title: 'DHPP Core Booster',
-              date: 'Administered: Nov 10, 2024 • Expires: Nov 10, 2025',
-              vet: 'Dr. Sarah Jenkins, DVM',
-              isVerified: true,
-            ),
-            _buildRecordItem(
-              context,
-              title: 'Bordetella Oral Vaccine',
-              date: 'Administered: Jun 02, 2024 • Expires: Jun 02, 2025',
-              vet: 'Metro Pet Care Clinic',
-              isVerified: true,
-            ),
-            AppSpacing.gapLg,
-            Text('Medical & Surgery Ledger', style: AppTypography.headlineMedium(context)),
-            AppSpacing.gapMd,
-            _buildRecordItem(
-              context,
-              title: 'Routine Dental Scaling & Polish',
-              date: 'Performed: Aug 14, 2024',
-              vet: 'Metro Pet Care Clinic',
-              isVerified: true,
-            ),
-          ],
-        ),
-      ),
     );
   }
 
