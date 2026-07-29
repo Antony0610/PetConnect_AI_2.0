@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.6.0] - 2026-07-29
+
+### System Validation, Reliability & Release Candidate
+- **Full Ecosystem Validation**: Conducted end-to-end reliability, network resilience, security, performance, and build artifact audits.
+- **Validation Documentation Suite**: Added `docs/SYSTEM_VALIDATION_REPORT.md`, `docs/RELIABILITY_REPORT.md`, `docs/NETWORK_RESILIENCE_REPORT.md`, `docs/AI_VALIDATION_REPORT.md`, `docs/SECURITY_AUDIT_REPORT.md`, `docs/PERFORMANCE_BENCHMARK_REPORT.md`, `docs/BUILD_VALIDATION_REPORT.md`, and `docs/FINAL_RELEASE_CANDIDATE_REPORT.md`.
+- **System Designation**: Certified as `PetConnect AI Ecosystem v2.6.0 (System Validation, Reliability & Release Candidate Edition)` with status `RELEASE CANDIDATE CERTIFIED`.
+
 ## [2.5.0] - 2026-07-29
 
 ### Complete Scope Audit & Missing Feature Implementation
