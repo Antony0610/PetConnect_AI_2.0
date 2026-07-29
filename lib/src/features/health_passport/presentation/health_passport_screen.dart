@@ -89,9 +89,9 @@ class _HealthPassportScreenState extends State<HealthPassportScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Luna', style: AppTypography.headlineMedium(context)),
-                                    Text('Canine • Golden Retriever • 3 yrs 2 mos', style: AppTypography.bodyMedium(context)),
-                                    Text('Microchip ID: 985141002938102', style: AppTypography.labelLarge(context)),
+                                    Text(_passportData['pet_name']?.toString() ?? 'Luna', style: AppTypography.headlineMedium(context)),
+                                    Text(_passportData['breed']?.toString() ?? 'Canine • Golden Retriever • 3 yrs 2 mos', style: AppTypography.bodyMedium(context)),
+                                    Text('Microchip ID: ${_passportData['microchip_id'] ?? '985141002938102'}', style: AppTypography.labelLarge(context)),
                                   ],
                                 ),
                               ),

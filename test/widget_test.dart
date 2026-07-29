@@ -11,5 +11,6 @@ void main() {
     );
 
     expect(find.byType(PetConnectApp), findsOneWidget);
+    await tester.pumpAndSettle(const Duration(seconds: 4));
   });
 }

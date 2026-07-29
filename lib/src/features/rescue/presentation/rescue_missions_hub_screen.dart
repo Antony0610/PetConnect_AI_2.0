@@ -60,8 +60,8 @@ class _RescueMissionsHubScreenState extends State<RescueMissionsHubScreen> {
                         ],
                       ),
                       AppSpacing.gapSm,
-                      Text('Injured Stray Dog Reported near Highway Exit 4', style: AppTypography.bodyLarge(context)),
-                      Text('Reported by Citizen • Coordinates: 40.7128° N, 74.0060° W', style: AppTypography.labelLarge(context)),
+                      Text(_missions.isNotEmpty ? (_missions.first['title']?.toString() ?? 'Injured Stray Dog Reported near Highway Exit 4') : 'Injured Stray Dog Reported near Highway Exit 4', style: AppTypography.bodyLarge(context)),
+                      Text('Active Dispatches: ${_missions.length} • Coordinates: 40.7128° N, 74.0060° W', style: AppTypography.labelLarge(context)),
                       AppSpacing.gapMd,
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryTeal, foregroundColor: Colors.white),

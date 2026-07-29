@@ -88,7 +88,7 @@ class _SmartCollarSetupScreenState extends State<SmartCollarSetupScreen> with Si
                           color: AppColors.primaryTeal.withOpacity(0.2),
                           border: Border.all(color: AppColors.primaryTeal),
                         ),
-                        child: const Icon(Icons.bluetooth_searching, color: AppColors.secondaryCyan, size: 36),
+                        child: Icon(_isScanning ? Icons.bluetooth_searching : Icons.bluetooth_connected, color: AppColors.secondaryCyan, size: 36),
                       );
                     },
                   ),
@@ -107,13 +107,15 @@ class _SmartCollarSetupScreenState extends State<SmartCollarSetupScreen> with Si
                       style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryTeal),
                       onPressed: () async {
                         await _collarRepository.pairDevice('collar_001', 'SECRET_8821');
-                        if (mounted) {
-                          _bleScanController.stop();
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Collar paired successfully via BLE Security Key!')),
-                          );
-                        }
+                        if (!context.mounted) return;
+                        _bleScanController.stop();
+                        setState(() {
+                          _isPaired = true;
+                        });
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Collar paired successfully via BLE Security Key!')),
+                        );
                       },
                       child: const Text('Pair Now', style: TextStyle(color: Colors.white)),
                     ),
@@ -196,7 +198,7 @@ class _SmartCollarSetupScreenState extends State<SmartCollarSetupScreen> with Si
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       _buildInfoItem('Battery', '$battery%', Icons.battery_full, AppColors.successGreen),
-                      _buildInfoItem('GPS Signal', 'Strong (12 SAT)', Icons.gps_fixed, AppColors.primaryTeal),
+                      _buildInfoItem('Status', _isPaired ? 'Paired (BLE)' : 'Scanning', Icons.bluetooth_connected, AppColors.primaryTeal),
                       _buildInfoItem('Firmware', 'v2.4.1 (Latest)', Icons.system_update, AppColors.secondaryCyan),
                     ],
                   ),

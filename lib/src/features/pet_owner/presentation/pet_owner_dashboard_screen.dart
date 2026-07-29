@@ -88,7 +88,7 @@ class _PetOwnerDashboardScreenState extends State<PetOwnerDashboardScreen> {
                   AppSpacing.gapLg,
                   Text('Live Telemetry', style: AppTypography.headlineMedium(context)),
                   AppSpacing.gapMd,
-                  Row(
+                  const Row(
                     children: [
                       Expanded(
                         child: PetVitalsCard(
@@ -114,7 +114,7 @@ class _PetOwnerDashboardScreenState extends State<PetOwnerDashboardScreen> {
                     ],
                   ),
                   AppSpacing.gapMd,
-                  Row(
+                  const Row(
                     children: [
                       Expanded(
                         child: PetVitalsCard(
@@ -215,5 +215,4 @@ class _PetOwnerDashboardScreenState extends State<PetOwnerDashboardScreen> {
       ),
     );
   }
-}}
 }

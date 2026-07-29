@@ -27,4 +27,7 @@ class AIRepository {
       'response': 'Based on clinical guidelines, monitor hydration levels and maintain balanced dietary intake.'
     };
   }
+
+  /// Alias for queryMedicalAssistant
+  Future<Map<String, dynamic>> askAssistant(String prompt) => queryMedicalAssistant(prompt);
 }

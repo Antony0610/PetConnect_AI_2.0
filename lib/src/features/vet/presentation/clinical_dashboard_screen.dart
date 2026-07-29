@@ -138,20 +138,31 @@ class _ClinicalDashboardScreenState extends State<ClinicalDashboardScreen> {
         ),
         actions: [
           IconButton(
+            icon: const Icon(Icons.refresh),
+            tooltip: 'Sync EHR Queue',
+            onPressed: () async {
+              setState(() => _isLoading = true);
+              await _petsRepository.getMyPets();
+              if (mounted) setState(() => _isLoading = false);
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.switch_account),
             tooltip: 'Switch Portal',
             onPressed: () => context.go(AppRoutes.roleSelection),
           ),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          setState(() => _isLoading = true);
-          await Future.delayed(const Duration(milliseconds: 600));
-          if (mounted) setState(() => _isLoading = false);
-        },
-        child: SingleChildScrollView(
-          padding: AppSpacing.paddingLg,
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator(color: AppColors.primaryTeal))
+          : RefreshIndicator(
+              onRefresh: () async {
+                setState(() => _isLoading = true);
+                await Future.delayed(const Duration(milliseconds: 600));
+                if (mounted) setState(() => _isLoading = false);
+              },
+              child: SingleChildScrollView(
+                padding: AppSpacing.paddingLg,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

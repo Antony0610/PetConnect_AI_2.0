@@ -62,9 +62,10 @@ class _AIScanScreenState extends State<AIScanScreen> with SingleTickerProviderSt
   }
 
   void _showDiagnosisModal(BuildContext context, Map<String, dynamic> result) {
-    final confidence = (result['confidence'] ?? 0.94) * 100;
-    final primaryLabel = result['primary_diagnosis'] ?? 'Benign Epidermal Dermatitis';
-    final severity = result['severity'] ?? 'Mild Risk';
+    final activeResult = _analysisResult ?? result;
+    final confidence = (activeResult['confidence'] ?? 0.94) * 100;
+    final primaryLabel = activeResult['primary_diagnosis'] ?? 'Benign Epidermal Dermatitis';
+    final severity = activeResult['severity'] ?? 'Mild Risk';
 
     showModalBottomSheet(
       context: context,

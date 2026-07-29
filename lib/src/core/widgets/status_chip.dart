@@ -19,7 +19,7 @@ class StatusChip extends StatelessWidget {
       case StatusType.success:
         return AppColors.successGreen.withOpacity(0.15);
       case StatusType.warning:
-        return AppColors.warningAmber.withOpacity(0.15);
+        return AppColors.warningOrange.withOpacity(0.15);
       case StatusType.error:
         return AppColors.errorRed.withOpacity(0.15);
       case StatusType.info:
@@ -32,7 +32,7 @@ class StatusChip extends StatelessWidget {
       case StatusType.success:
         return AppColors.successGreen;
       case StatusType.warning:
-        return AppColors.warningAmber;
+        return AppColors.warningOrange;
       case StatusType.error:
         return AppColors.errorRed;
       case StatusType.info:

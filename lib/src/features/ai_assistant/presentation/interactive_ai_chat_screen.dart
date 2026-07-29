@@ -54,7 +54,8 @@ class _InteractiveAIChatScreenState extends State<InteractiveAIChatScreen> {
     final response = await _aiRepository.askAssistant(query);
     if (mounted) {
       setState(() {
-        _messages.add({'sender': 'ai', 'text': response});
+        final responseText = response['response']?.toString() ?? 'Based on clinical guidelines, monitor hydration levels.';
+        _messages.add({'sender': 'ai', 'text': responseText});
         _isTyping = false;
       });
       _scrollToBottom();
@@ -236,13 +237,16 @@ class _InteractiveAIChatScreenState extends State<InteractiveAIChatScreen> {
                   radius: 24,
                   child: IconButton(
                     icon: const Icon(Icons.send, color: Colors.white, size: 20),
+                    onPressed: () {
+                      if (_textController.text.trim().isNotEmpty) {
+                        _sendMessage(_textController.text.trim());
                       }
                     },
                   ),
-                )
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
