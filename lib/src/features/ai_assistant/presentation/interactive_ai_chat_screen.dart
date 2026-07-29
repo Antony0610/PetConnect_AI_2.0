@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_typography.dart';
+import '../../../core/repositories/ai_repository.dart';
 import '../../../core/widgets/glass_container.dart';
 
 class InteractiveAIChatScreen extends StatefulWidget {
@@ -12,10 +14,15 @@ class InteractiveAIChatScreen extends StatefulWidget {
 }
 
 class _InteractiveAIChatScreenState extends State<InteractiveAIChatScreen> {
+  final AIRepository _aiRepository = AIRepository();
+  final ScrollController _scrollController = ScrollController();
+  final TextEditingController _textController = TextEditingController();
+  
+  bool _isTyping = false;
   final List<Map<String, String>> _messages = [
     {
       'sender': 'ai',
-      'text': 'Hello! I am your PetConnect AI Care Assistant. How can I assist with Luna\'s health or nutrition today?'
+      'text': 'Hello! I am your PetConnect AI Veterinary Assistant. How can I assist with Luna\'s health or nutrition today?'
     },
     {
       'sender': 'user',
@@ -27,7 +34,44 @@ class _InteractiveAIChatScreenState extends State<InteractiveAIChatScreen> {
     },
   ];
 
-  final _textController = TextEditingController();
+  final List<String> _suggestedPrompts = [
+    'Canine diet recommendations',
+    'Vaccination schedule check',
+    'Heart rate telemetry analysis',
+    'Tick & flea prevention tips',
+  ];
+
+  Future<void> _sendMessage(String query) async {
+    if (query.trim().isEmpty) return;
+
+    setState(() {
+      _messages.add({'sender': 'user', 'text': query});
+      _isTyping = true;
+    });
+    _textController.clear();
+    _scrollToBottom();
+
+    final response = await _aiRepository.askAssistant(query);
+    if (mounted) {
+      setState(() {
+        _messages.add({'sender': 'ai', 'text': response});
+        _isTyping = false;
+      });
+      _scrollToBottom();
+    }
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,41 +84,102 @@ class _InteractiveAIChatScreenState extends State<InteractiveAIChatScreen> {
             Text('AI Medical Assistant'),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.cleaning_services),
+            tooltip: 'Clear Chat',
+            onPressed: () {
+              setState(() => _messages.clear());
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
           Expanded(
             child: ListView.builder(
+              controller: _scrollController,
               padding: AppSpacing.paddingLg,
-              itemCount: _messages.length,
+              itemCount: _messages.length + (_isTyping ? 1 : 0),
               itemBuilder: (context, index) {
+                if (_isTyping && index == _messages.length) {
+                  return Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: AppSpacing.md),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.white10,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: 14,
+                            height: 14,
+                            child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.secondaryCyan),
+                          ),
+                          SizedBox(width: 10),
+                          Text('AI Care Assistant is typing...', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+
                 final msg = _messages[index];
                 final isAi = msg['sender'] == 'ai';
                 return Align(
                   alignment: isAi ? Alignment.centerLeft : Alignment.centerRight,
                   child: Container(
                     margin: const EdgeInsets.only(bottom: AppSpacing.md),
-                    constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.78),
+                    constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
                     child: GlassContainer(
                       padding: AppSpacing.paddingMd,
                       borderRadius: AppSpacing.radiusLg,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (isAi)
-                            Row(
-                              children: [
-                                const Icon(Icons.auto_awesome, size: 14, color: AppColors.secondaryCyan),
-                                const SizedBox(width: 4),
-                                Text('PetConnect RAG Model', style: AppTypography.labelLarge(context)),
-                              ],
-                            ),
-                          if (isAi) const SizedBox(height: 4),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    isAi ? Icons.auto_awesome : Icons.person,
+                                    size: 14,
+                                    color: isAi ? AppColors.secondaryCyan : AppColors.primaryTeal,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    isAi ? 'PetConnect RAG Model' : 'You',
+                                    style: AppTypography.labelLarge(context).copyWith(
+                                      color: isAi ? AppColors.secondaryCyan : AppColors.primaryTeal,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.copy, size: 14, color: Colors.white54),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () {
+                                  Clipboard.setData(ClipboardData(text: msg['text']!));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Message copied to clipboard')),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
                           Text(
                             msg['text']!,
                             style: AppTypography.bodyMedium(context).copyWith(
-                              color: isAi ? null : AppColors.primaryTeal,
-                              fontWeight: isAi ? FontWeight.normal : FontWeight.bold,
+                              color: isAi ? null : Colors.white,
+                              fontWeight: isAi ? FontWeight.normal : FontWeight.w500,
                             ),
                           ),
                         ],
@@ -85,34 +190,52 @@ class _InteractiveAIChatScreenState extends State<InteractiveAIChatScreen> {
               },
             ),
           ),
+          Container(
+            height: 40,
+            margin: const EdgeInsets.only(bottom: 8),
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: _suggestedPrompts.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: ActionChip(
+                    backgroundColor: Colors.white10,
+                    label: Text(_suggestedPrompts[index], style: const TextStyle(fontSize: 12, color: AppColors.secondaryCyan)),
+                    onPressed: () => _sendMessage(_suggestedPrompts[index]),
+                  ),
+                );
+              },
+            ),
+          ),
           Padding(
-            padding: AppSpacing.paddingLg,
+            padding: const EdgeInsets.all(16),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: _textController,
-                    decoration: const InputDecoration(
+                    onSubmitted: (val) => _sendMessage(val),
+                    decoration: InputDecoration(
                       hintText: 'Ask AI medical assistant...',
+                      hintStyle: const TextStyle(color: Colors.white54),
+                      fillColor: Colors.black26,
+                      filled: true,
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(999)),
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: const BorderSide(color: AppColors.primaryTeal),
                       ),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                     ),
                   ),
                 ),
-                AppSpacing.gapSm,
+                const SizedBox(width: 8),
                 CircleAvatar(
                   backgroundColor: AppColors.primaryTeal,
                   radius: 24,
                   child: IconButton(
                     icon: const Icon(Icons.send, color: Colors.white, size: 20),
-                    onPressed: () {
-                      if (_textController.text.isNotEmpty) {
-                        setState(() {
-                          _messages.add({'sender': 'user', 'text': _textController.text});
-                          _textController.clear();
-                        });
                       }
                     },
                   ),
