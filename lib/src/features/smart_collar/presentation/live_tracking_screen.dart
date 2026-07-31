@@ -127,7 +127,7 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> with SingleTick
                         ),
                         AppSpacing.gapLg,
                         Text(
-                          'Luna is inside Home Geofence ($geofenceStatus)',
+                          'Pet is inside Home Geofence ($geofenceStatus)',
                           style: AppTypography.titleLarge(context).copyWith(color: Colors.white, fontWeight: FontWeight.bold),
                         ),
                         AppSpacing.gapSm,

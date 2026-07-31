@@ -268,7 +268,7 @@ class _SmartCollarScreenState extends State<SmartCollarScreen> with SingleTicker
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(Icons.location_on, color: AppColors.tertiaryCoral, size: 36),
-                            Text('Luna (Home)', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11)),
+                            Text('Pet Location (Home)', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11)),
                           ],
                         ),
                       ],

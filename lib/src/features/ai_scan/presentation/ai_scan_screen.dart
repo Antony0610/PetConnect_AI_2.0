@@ -79,7 +79,7 @@ class _AIScanScreenState extends State<AIScanScreen> with SingleTickerProviderSt
     _showResultsModal(
       context,
       mode: modeLabel,
-      condition: modeLabel == 'Noseprint ID' ? 'Identity Verified (Luna #9842)' : 'Epidermal Allergic Dermatitis',
+      condition: modeLabel == 'Noseprint ID' ? 'Identity Verified (Biometric Record #9842)' : 'Epidermal Allergic Dermatitis',
       confidence: '96.8%',
       recommendations: 'Regular cleaning with medicated antiseptic wipes. Monitor area for redness or itching over 48 hours.',
     );

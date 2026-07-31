@@ -92,7 +92,7 @@ class PetEntity {
 
   factory PetEntity.fromJson(Map<String, dynamic> json) => PetEntity(
         id: json['id'] ?? 'pet_${DateTime.now().millisecondsSinceEpoch}',
-        name: json['name'] ?? 'Luna',
+        name: json['name'] ?? 'Unnamed Pet',
         species: json['species'] ?? 'Dog',
         breed: json['breed'] ?? 'Golden Retriever',
         ageYears: (json['ageYears'] as num?)?.toDouble() ?? 3.5,

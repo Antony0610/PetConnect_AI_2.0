@@ -49,9 +49,9 @@ class _PetOwnerDashboardScreenState extends State<PetOwnerDashboardScreen> {
         ? _pets[_selectedPetIndex]
         : null;
 
-    final petName = activePet?.name ?? 'Luna';
-    final breed = activePet?.breed ?? 'Golden Retriever';
-    final battery = activePet?.vitals.batteryLevel ?? 94;
+    final petName = activePet?.name ?? 'No Pets Registered';
+    final breed = activePet != null ? '${activePet.species} • ${activePet.breed}' : 'Tap + to add pet';
+    final batteryStatus = activePet?.vitals.batteryLevel != null ? '${activePet!.vitals.batteryLevel}% Battery' : 'No Collar Paired';
 
     return Scaffold(
       appBar: AppBar(
@@ -66,8 +66,8 @@ class _PetOwnerDashboardScreenState extends State<PetOwnerDashboardScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('$petName ($breed)', style: AppTypography.titleLarge(context)),
-                Text('Smart Collar Connected • $battery% Battery', style: AppTypography.labelLarge(context)),
+                Text(petName, style: AppTypography.titleLarge(context)),
+                Text('$breed • $batteryStatus', style: AppTypography.labelLarge(context)),
               ],
             ),
           ],

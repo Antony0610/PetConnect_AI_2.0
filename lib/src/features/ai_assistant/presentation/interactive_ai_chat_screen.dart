@@ -16,25 +16,25 @@ class _InteractiveAIChatScreenState extends State<InteractiveAIChatScreen> {
   final TextEditingController _textController = TextEditingController();
 
   bool _isTyping = false;
-  String _activeConversationTitle = 'Luna Health Consult';
+  String _activeConversationTitle = 'Pet Health Consult';
 
   final List<Map<String, String>> _messages = [
     {
       'sender': 'ai',
-      'text': 'Hello! I am your PetConnect AI Clinical Assistant. I am analyzing Luna\'s smart collar telemetry (8,420 steps today, 9.2 hrs restful sleep). How can I assist with her health, diet, or care today?'
+      'text': 'Hello! I am your PetConnect AI Clinical Assistant. I am ready to analyze your pet\'s health, collar telemetry, medical records, and diet. How can I assist with your pet\'s care today?'
     },
   ];
 
   final List<String> _suggestedPrompts = [
-    'Calculate Luna\'s daily caloric intake',
-    'Check skin rash symptoms',
-    'Vaccination booster schedule',
+    'Calculate daily caloric intake target',
+    'Check skin rash or allergy symptoms',
+    'Vaccination booster schedule info',
     'First aid for insect sting',
     'Smart collar GPS geofence setup',
   ];
 
   final List<Map<String, String>> _conversations = [
-    {'id': 'c1', 'title': 'Luna Health Consult', 'date': 'Today'},
+    {'id': 'c1', 'title': 'Pet Health Consult', 'date': 'Today'},
     {'id': 'c2', 'title': 'Diet & Nutrition Plan', 'date': 'Yesterday'},
     {'id': 'c3', 'title': 'Post-Vaccine Monitoring', 'date': 'July 20'},
   ];
@@ -64,15 +64,15 @@ class _InteractiveAIChatScreenState extends State<InteractiveAIChatScreen> {
     final lower = userMessage.toLowerCase();
 
     if (lower.contains('calor') || lower.contains('diet') || lower.contains('step')) {
-      responseText = 'Based on Luna\'s weight (28.5 kg), species (Dog - Golden Retriever), and active daily expenditure of 8,420 steps, her recommended daily caloric target is 1,280 kcal. Ensure 24% crude protein and fresh water access.';
+      responseText = 'Based on your pet\'s registered breed profile and daily activity expenditure, the recommended daily caloric target will be dynamically calculated. Ensure balanced crude protein and fresh water access.';
     } else if (lower.contains('rash') || lower.contains('skin') || lower.contains('flea')) {
       responseText = 'Skin lesions or localized redness can indicate allergic dermatitis or flea bite hypersensitivity. Clean the area with mild antiseptic soap. If scratching continues over 24 hours, perform an AI Vision Scan.';
     } else if (lower.contains('vaccin') || lower.contains('booster')) {
-      responseText = 'Luna\'s DHPP and Rabies vaccinations are registered as Up-to-Date in her Health Passport. Her next scheduled booster is due in October 2026.';
+      responseText = 'Your pet\'s DHPP and Rabies vaccinations can be registered and verified in the Health Passport. Check your active records for booster due dates.';
     } else if (lower.contains('sting') || lower.contains('first aid') || lower.contains('emergency')) {
       responseText = 'For insect or bee stings: 1) Safely scrape away any sting apparatus. 2) Apply a cold compress for 10 minutes. 3) Monitor for facial swelling or breathing distress. If lethargy occurs, tap Emergency SOS.';
     } else {
-      responseText = 'I have logged this inquiry in Luna\'s clinical care ledger. Based on veterinary guidelines for $userMessage, continue normal activity monitoring and consult your primary veterinarian if symptoms persist.';
+      responseText = 'I have logged this inquiry in your pet\'s care ledger. Based on veterinary guidelines for $userMessage, continue normal activity monitoring and consult your primary veterinarian if symptoms persist.';
     }
 
     setState(() {

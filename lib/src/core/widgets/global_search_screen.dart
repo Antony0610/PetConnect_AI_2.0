@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_spacing.dart';
-import '../routing/app_router.dart';
 
 class GlobalSearchScreen extends StatefulWidget {
   const GlobalSearchScreen({super.key});
@@ -15,58 +14,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _activeCategory = 'All';
   String _query = '';
-
-  final List<Map<String, dynamic>> _allItems = [
-    {
-      'title': 'Luna',
-      'category': 'Pets',
-      'subtitle': 'Golden Retriever • Smart Collar ID #9842',
-      'icon': Icons.pets,
-      'route': AppRoutes.petOwnerDashboard,
-    },
-    {
-      'title': 'Max',
-      'category': 'Pets',
-      'subtitle': 'German Shepherd • Vaccinated Up-to-Date',
-      'icon': Icons.pets,
-      'route': AppRoutes.petOwnerDashboard,
-    },
-    {
-      'title': 'Rabies Vaccine Certificate',
-      'category': 'Health Passport',
-      'subtitle': 'Administered: June 14, 2026 • Valid 3 Yrs',
-      'icon': Icons.medical_information,
-      'route': AppRoutes.healthPassport,
-    },
-    {
-      'title': 'Bloodwork & Hematology Report',
-      'category': 'Health Passport',
-      'subtitle': 'CBC Panel Normal • Dr. Sarah Jenkins',
-      'icon': Icons.description,
-      'route': AppRoutes.healthPassport,
-    },
-    {
-      'title': 'Injured Stray Terrier Alert',
-      'category': 'Volunteer Cases',
-      'subtitle': 'Location: 4th Ave Park • Status: Dispatched',
-      'icon': Icons.emergency,
-      'route': AppRoutes.rescueHub,
-    },
-    {
-      'title': 'Dr. Robert Vance (DVM)',
-      'category': 'Vet Patients',
-      'subtitle': 'Senior Veterinary Surgeon • City Vet Hospital',
-      'icon': Icons.local_hospital,
-      'route': AppRoutes.vetDashboard,
-    },
-    {
-      'title': 'Admin System Audit Log #882',
-      'category': 'Admin Users',
-      'subtitle': 'Role Access Modification • Granted Vet Status',
-      'icon': Icons.admin_panel_settings,
-      'route': AppRoutes.adminDashboard,
-    },
-  ];
+  final List<Map<String, dynamic>> _allItems = [];
 
   @override
   void dispose() {

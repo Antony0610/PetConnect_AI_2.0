@@ -110,7 +110,7 @@ class _HealthPassportScreenState extends State<HealthPassportScreen> with Single
               child: const Icon(Icons.qr_code_2, size: 160, color: AppColors.primaryTeal),
             ),
             AppSpacing.gapMd,
-            const Text('Scan this QR code at veterinary clinics to load Luna\'s verified medical passport instantly.', textAlign: TextAlign.center, style: TextStyle(fontSize: 13, color: Colors.grey)),
+            const Text('Scan this QR code at veterinary clinics to load your pet\'s verified medical passport instantly.', textAlign: TextAlign.center, style: TextStyle(fontSize: 13, color: Colors.grey)),
           ],
         ),
         actions: [

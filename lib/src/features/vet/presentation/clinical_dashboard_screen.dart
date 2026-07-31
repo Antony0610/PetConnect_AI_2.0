@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/routing/app_router.dart';
@@ -17,36 +16,7 @@ class _ClinicalDashboardScreenState extends State<ClinicalDashboardScreen> with 
   final TextEditingController _searchController = TextEditingController();
 
   String _searchQuery = '';
-
-  final List<Map<String, dynamic>> _appointments = [
-    {
-      'id': 'apt_1',
-      'pet': 'Luna (Golden Retriever)',
-      'owner': 'Alex Morgan',
-      'phone': '+1 (800) 555-0199',
-      'time': '10:30 AM Today',
-      'type': 'In-Person Consult',
-      'status': 'Confirmed',
-    },
-    {
-      'id': 'apt_2',
-      'pet': 'Max (German Shepherd)',
-      'owner': 'Rachel Green',
-      'phone': '+1 (800) 555-4422',
-      'time': '01:15 PM Today',
-      'type': 'AI Scan Review',
-      'status': 'Checked In',
-    },
-    {
-      'id': 'apt_3',
-      'pet': 'Bella (Persian Cat)',
-      'owner': 'David Miller',
-      'phone': '+1 (800) 555-8811',
-      'time': '03:45 PM Today',
-      'type': 'Telehealth Video',
-      'status': 'Pending',
-    },
-  ];
+  final List<Map<String, dynamic>> _appointments = [];
 
   @override
   void initState() {
@@ -221,31 +191,19 @@ class _ClinicalDashboardScreenState extends State<ClinicalDashboardScreen> with 
                     }),
                   ],
                 ),
-                ListView(
-                  padding: AppSpacing.paddingLg,
-                  children: [
-                    ListTile(
-                      leading: const CircleAvatar(backgroundColor: AppColors.primaryTeal, child: Icon(Icons.folder_shared, color: Colors.white)),
-                      title: const Text('Luna (Golden Retriever)', style: TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: const Text('Microchip #985141 • Vaccinated Up-to-Date'),
-                      trailing: ElevatedButton(
-                        style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryTeal, foregroundColor: Colors.white),
-                        onPressed: () => context.go(AppRoutes.healthPassport),
-                        child: const Text('Open EHR'),
-                      ),
+                const Center(
+                  child: Padding(
+                    padding: AppSpacing.paddingLg,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.folder_off_outlined, size: 48, color: Colors.grey),
+                        AppSpacing.gapMd,
+                        Text('No Patient EHR Records Found', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        Text('Search for a patient or scan a QR code to load medical records.', style: TextStyle(color: Colors.grey, fontSize: 13)),
+                      ],
                     ),
-                    const Divider(),
-                    ListTile(
-                      leading: const CircleAvatar(backgroundColor: AppColors.primaryTeal, child: Icon(Icons.folder_shared, color: Colors.white)),
-                      title: const Text('Milo (British Shorthair)', style: TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: const Text('Microchip #441092 • Indoor Cat'),
-                      trailing: ElevatedButton(
-                        style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryTeal, foregroundColor: Colors.white),
-                        onPressed: () => context.go(AppRoutes.healthPassport),
-                        child: const Text('Open EHR'),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
                 Center(
                   child: Padding(
