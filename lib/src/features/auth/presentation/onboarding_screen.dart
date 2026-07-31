@@ -4,6 +4,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_typography.dart';
 import '../../../core/routing/app_router.dart';
+import '../../../core/security/secure_storage_service.dart';
 import '../../../core/widgets/glass_container.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -19,25 +20,41 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   final List<Map<String, String>> _pages = [
     {
-      'title': 'AI Vitals & Smart Telemetry',
-      'description': 'Continuous health monitoring powered by Smart Collar sensors and medical-grade AI diagnostic algorithms.',
-      'icon': 'monitor_heart',
+      'title': 'Smart Collar Telemetry',
+      'description': 'Real-time GPS tracking, geofencing, daily activity graphs, battery status, and instant SOS alerts.',
+      'icon': 'my_location',
     },
     {
-      'title': 'Instant AI Scan & Noseprint ID',
-      'description': 'Identify strays, detect skin lesions, and scan medical documents instantly using computer vision.',
+      'title': 'AI Vision Diagnostics',
+      'description': 'Capture skin photos or noseprints for instant disease predictions, confidence scores, and PDF medical reports.',
       'icon': 'center_focus_strong',
     },
     {
-      'title': 'Unified Multi-Portal Ecosystem',
-      'description': 'Seamless collaboration between Pet Owners, Veterinarians, Rescuers, and Administrators.',
+      'title': 'Connected Pet Ecosystem',
+      'description': 'Seamless multi-portal collaboration connecting Pet Owners, Veterinarians, Field Volunteers, and Administrators.',
       'icon': 'hub',
     },
   ];
 
+  void _finishOnboarding() async {
+    final storage = await SecureStorageService.getInstance();
+    await storage.setHasSeenOnboarding(true);
+    if (mounted) {
+      context.go(AppRoutes.login);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        actions: [
+          TextButton(
+            onPressed: _finishOnboarding,
+            child: const Text('Skip', style: TextStyle(color: AppColors.primaryTeal, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
       body: Stack(
         children: [
           PageView.builder(
@@ -48,28 +65,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               final page = _pages[index];
               return Container(
                 padding: AppSpacing.paddingXl,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [AppColors.lightBackground, Color(0xFFEFF4FF)],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     GlassContainer(
-                      width: 200,
-                      height: 200,
-                      borderRadius: 100,
+                      width: 180,
+                      height: 180,
+                      borderRadius: 90,
                       child: Center(
                         child: Icon(
                           index == 0
-                              ? Icons.monitor_heart
+                              ? Icons.my_location
                               : index == 1
                                   ? Icons.center_focus_strong
                                   : Icons.hub,
-                          size: 80,
+                          size: 72,
                           color: AppColors.primaryTeal,
                         ),
                       ),
@@ -129,7 +139,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         curve: Curves.easeInOut,
                       );
                     } else {
-                      context.go(AppRoutes.login);
+                      _finishOnboarding();
                     }
                   },
                   child: Text(_currentIndex == _pages.length - 1 ? 'Get Started' : 'Next'),

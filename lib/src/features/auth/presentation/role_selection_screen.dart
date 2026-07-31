@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_typography.dart';
-import '../../../core/routing/app_router.dart';
 import '../../../core/widgets/role_selector_card.dart';
 
 class RoleSelectionScreen extends StatefulWidget {
@@ -16,105 +15,98 @@ class RoleSelectionScreen extends StatefulWidget {
 class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
   String _selectedRole = 'pet_owner';
 
-  void _navigateToRole(String role) {
-    switch (role) {
-      case 'pet_owner':
-        context.go(AppRoutes.petOwnerDashboard);
-        break;
-      case 'vet':
-        context.go(AppRoutes.vetDashboard);
-        break;
-      case 'volunteer':
-        context.go(AppRoutes.volunteerDashboard);
-        break;
-      case 'admin':
-        context.go(AppRoutes.adminDashboard);
-        break;
-    }
+  void _proceedToLogin(String role) {
+    context.go('/login?role=$role');
+  }
+
+  void _proceedToRegister(String role) {
+    context.go('/register?role=$role');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Select User Portal'),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
+        title: const Text('Select Portal Role'),
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: AppSpacing.paddingLg,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Choose Your Role',
-                style: AppTypography.headlineLarge(context),
-              ),
-              AppSpacing.gapXs,
-              Text(
-                'Access customized dashboards, clinical tools, or rescue mission controls.',
-                style: AppTypography.bodyMedium(context),
-              ),
-              AppSpacing.gapLg,
-              Expanded(
-                child: ListView(
-                  children: [
-                    RoleSelectorCard(
-                      roleKey: 'pet_owner',
-                      title: 'Pet Owner Portal',
-                      description: 'Track vitals, manage health passports, Smart Collar geofencing, and AI symptom assistant.',
-                      icon: Icons.pets,
-                      isSelected: _selectedRole == 'pet_owner',
-                      onTap: () => setState(() => _selectedRole = 'pet_owner'),
+      body: SingleChildScrollView(
+        padding: AppSpacing.paddingLg,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Welcome to PetConnect AI',
+              style: AppTypography.headlineLarge(context),
+            ),
+            AppSpacing.gapSm,
+            Text(
+              'Select your role to access specialized features. Each role has separate authentication credentials.',
+              style: AppTypography.bodyMedium(context),
+            ),
+            AppSpacing.gapLg,
+            RoleSelectorCard(
+              roleKey: 'pet_owner',
+              title: 'Pet Owner Portal',
+              description: 'Manage pet profiles, smart collar telemetry, AI vision scans, health passports & chat assistant.',
+              icon: Icons.pets,
+              isSelected: _selectedRole == 'pet_owner',
+              onTap: () => setState(() => _selectedRole = 'pet_owner'),
+            ),
+            AppSpacing.gapMd,
+            RoleSelectorCard(
+              roleKey: 'vet',
+              title: 'Veterinarian Clinical Hub',
+              description: 'Consultations queue, digital prescription builder, medical EHR records & patient scheduling.',
+              icon: Icons.medical_services,
+              isSelected: _selectedRole == 'vet',
+              onTap: () => setState(() => _selectedRole = 'vet'),
+            ),
+            AppSpacing.gapMd,
+            RoleSelectorCard(
+              roleKey: 'volunteer',
+              title: 'Volunteer & Rescue Portal',
+              description: 'Stray alerts feed, live dispatch map, duty radar, rescue mission tracking & community feed.',
+              icon: Icons.volunteer_activism,
+              isSelected: _selectedRole == 'volunteer',
+              onTap: () => setState(() => _selectedRole = 'volunteer'),
+            ),
+            AppSpacing.gapMd,
+            RoleSelectorCard(
+              roleKey: 'admin',
+              title: 'Administrator Command Center',
+              description: 'System telemetry, user directory RBAC, remote feature flags, AI statistics & health probes.',
+              icon: Icons.admin_panel_settings,
+              isSelected: _selectedRole == 'admin',
+              onTap: () => setState(() => _selectedRole = 'admin'),
+            ),
+            AppSpacing.gapXl,
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      side: const BorderSide(color: AppColors.primaryTeal),
                     ),
-                    RoleSelectorCard(
-                      roleKey: 'vet',
-                      title: 'Veterinarian Portal',
-                      description: 'Clinical EHR records, teleconsultations, digital Rx generator, and lab diagnostics.',
-                      icon: Icons.medical_services,
-                      isSelected: _selectedRole == 'vet',
-                      onTap: () => setState(() => _selectedRole = 'vet'),
-                    ),
-                    RoleSelectorCard(
-                      roleKey: 'volunteer',
-                      title: 'Volunteer & Rescue Portal',
-                      description: 'Live incident dispatch, stray noseprint matching, adoption applications, and events.',
-                      icon: Icons.volunteer_activism,
-                      isSelected: _selectedRole == 'volunteer',
-                      onTap: () => setState(() => _selectedRole = 'volunteer'),
-                    ),
-                    RoleSelectorCard(
-                      roleKey: 'admin',
-                      title: 'Administrator Portal',
-                      description: 'Whole-platform telemetry, user management, audit logs, revenue, and fleet OTA.',
-                      icon: Icons.admin_panel_settings,
-                      isSelected: _selectedRole == 'admin',
-                      onTap: () => setState(() => _selectedRole = 'admin'),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryTeal,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppSpacing.radiusPill),
-                    ),
-                  ),
-                  onPressed: () => _navigateToRole(_selectedRole),
-                  child: const Text(
-                    'Continue to Selected Portal',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    onPressed: () => _proceedToRegister(_selectedRole),
+                    child: const Text('Create Account'),
                   ),
                 ),
-              ),
-            ],
-          ),
+                AppSpacing.gapMd,
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryTeal,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    onPressed: () => _proceedToLogin(_selectedRole),
+                    child: const Text('Sign In'),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

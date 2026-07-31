@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
-import '../../../core/constants/app_typography.dart';
-import '../../../core/repositories/pets_repository.dart';
 import '../../../core/routing/app_router.dart';
-import '../../../core/widgets/glass_container.dart';
-import '../../../core/widgets/status_chip.dart';
+import '../../../core/widgets/app_drawer.dart';
 
 class ClinicalDashboardScreen extends StatefulWidget {
   const ClinicalDashboardScreen({super.key});
@@ -15,296 +12,315 @@ class ClinicalDashboardScreen extends StatefulWidget {
   State<ClinicalDashboardScreen> createState() => _ClinicalDashboardScreenState();
 }
 
-class _ClinicalDashboardScreenState extends State<ClinicalDashboardScreen> {
-  final PetsRepository _petsRepository = PetsRepository();
+class _ClinicalDashboardScreenState extends State<ClinicalDashboardScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
-  int _selectedFilterIndex = 0;
-  bool _isLoading = false;
 
-  final List<Map<String, dynamic>> _allPatients = [
+  String _searchQuery = '';
+
+  final List<Map<String, dynamic>> _appointments = [
     {
-      'petName': 'Luna (Golden Retriever)',
-      'ownerName': 'Owner: Alex Morgan',
-      'reason': 'Routine Vitals & Dental Scaling Checkup',
-      'time': '10:30 AM',
-      'status': StatusType.success,
-      'statusText': 'Checked In',
-      'category': 1, // Checked In
+      'id': 'apt_1',
+      'pet': 'Luna (Golden Retriever)',
+      'owner': 'Alex Morgan',
+      'phone': '+1 (800) 555-0199',
+      'time': '10:30 AM Today',
+      'type': 'In-Person Consult',
+      'status': 'Confirmed',
     },
     {
-      'petName': 'Max (German Shepherd)',
-      'ownerName': 'Owner: Rachel Green',
-      'reason': 'AI Skin Lesion Alert Scan Review',
-      'time': '11:15 AM',
-      'status': StatusType.warning,
-      'statusText': 'AI Flagged',
-      'category': 2, // AI Flagged
+      'id': 'apt_2',
+      'pet': 'Max (German Shepherd)',
+      'owner': 'Rachel Green',
+      'phone': '+1 (800) 555-4422',
+      'time': '01:15 PM Today',
+      'type': 'AI Scan Review',
+      'status': 'Checked In',
     },
     {
-      'petName': 'Bella (Persian Cat)',
-      'ownerName': 'Owner: David Miller',
-      'reason': 'Teleconsultation Follow-up',
-      'time': '02:00 PM',
-      'status': StatusType.info,
-      'statusText': 'Teleconsult',
-      'category': 3, // Teleconsult
+      'id': 'apt_3',
+      'pet': 'Bella (Persian Cat)',
+      'owner': 'David Miller',
+      'phone': '+1 (800) 555-8811',
+      'time': '03:45 PM Today',
+      'type': 'Telehealth Video',
+      'status': 'Pending',
     },
   ];
 
-  void _showPatientEHRModal(BuildContext context, Map<String, dynamic> patient) {
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 4, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _showPrescriptionBuilderModal() {
+    final drugCtrl = TextEditingController();
+    final dosageCtrl = TextEditingController(text: '1 Tablet daily');
+    final durationCtrl = TextEditingController(text: '7 Days');
+
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF1E293B),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.only(
+          left: 20,
+          right: 20,
+          top: 20,
+          bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Digital Prescription Builder', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            AppSpacing.gapLg,
+            TextField(
+              controller: drugCtrl,
+              decoration: const InputDecoration(labelText: 'Medication Name (e.g. Amoxicillin)', border: OutlineInputBorder()),
+            ),
+            AppSpacing.gapMd,
+            TextField(
+              controller: dosageCtrl,
+              decoration: const InputDecoration(labelText: 'Dosage & Frequency', border: OutlineInputBorder()),
+            ),
+            AppSpacing.gapMd,
+            TextField(
+              controller: durationCtrl,
+              decoration: const InputDecoration(labelText: 'Duration / Days', border: OutlineInputBorder()),
+            ),
+            AppSpacing.gapLg,
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryTeal, foregroundColor: Colors.white),
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Digital Rx signed and exported as official PDF!')),
+                  );
+                },
+                icon: const Icon(Icons.picture_as_pdf),
+                label: const Text('Sign & Export Digital Rx PDF'),
+              ),
+            ),
+          ],
+        ),
       ),
-      builder: (context) {
-        return Padding(
-          padding: AppSpacing.paddingLg,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(2)),
-                ),
-              ),
-              AppSpacing.gapLg,
-              Row(
-                children: [
-                  const CircleAvatar(
-                    backgroundColor: AppColors.primaryTeal,
-                    radius: 24,
-                    child: Icon(Icons.medical_information, color: Colors.white),
-                  ),
-                  AppSpacing.gapMd,
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(patient['petName'], style: AppTypography.titleLarge(context).copyWith(color: Colors.white)),
-                      Text(patient['ownerName'], style: const TextStyle(color: Colors.white70)),
-                    ],
-                  ),
-                ],
-              ),
-              AppSpacing.gapLg,
-              Text('Chief Complaint / Reason:', style: AppTypography.titleMedium(context).copyWith(color: AppColors.secondaryCyan)),
-              Text(patient['reason'], style: const TextStyle(color: Colors.white)),
-              AppSpacing.gapLg,
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryTeal),
-                      onPressed: () {
-                        Navigator.pop(context);
-                        context.go(AppRoutes.healthPassport);
-                      },
-                      icon: const Icon(Icons.folder_shared, color: Colors.white),
-                      label: const Text('Open EHR Passport', style: TextStyle(color: Colors.white)),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-            ],
-          ),
-        );
-      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final searchQuery = _searchController.text.toLowerCase();
-    final filteredPatients = _allPatients.where((patient) {
-      final matchesSearch = patient['petName'].toLowerCase().contains(searchQuery) ||
-          patient['ownerName'].toLowerCase().contains(searchQuery);
-      final matchesFilter = _selectedFilterIndex == 0 || patient['category'] == _selectedFilterIndex;
-      return matchesSearch && matchesFilter;
-    }).toList();
-
     return Scaffold(
       appBar: AppBar(
         title: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Veterinarian Clinical Hub'),
-            Text('Metro Pet Hospital • Dr. Sarah Jenkins', style: TextStyle(fontSize: 12)),
+            Text('Metro Pet Hospital • Dr. Sarah Jenkins (DVM)', style: TextStyle(fontSize: 11, color: Colors.grey)),
           ],
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
-            tooltip: 'Sync EHR Queue',
-            onPressed: () async {
-              setState(() => _isLoading = true);
-              await _petsRepository.getMyPets();
-              if (mounted) setState(() => _isLoading = false);
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.switch_account),
-            tooltip: 'Switch Portal',
-            onPressed: () => context.go(AppRoutes.roleSelection),
+            icon: const Icon(Icons.add_task),
+            tooltip: 'Issue Rx',
+            onPressed: _showPrescriptionBuilderModal,
           ),
         ],
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.primaryTeal))
-          : RefreshIndicator(
-              onRefresh: () async {
-                setState(() => _isLoading = true);
-                await Future.delayed(const Duration(milliseconds: 600));
-                if (mounted) setState(() => _isLoading = false);
-              },
-              child: SingleChildScrollView(
-                padding: AppSpacing.paddingLg,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Clinical Metrics Summary Row
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildMetricTile(context, 'Today Consults', '12', Icons.calendar_month, AppColors.primaryTeal),
-                  ),
-                  AppSpacing.gapMd,
-                  Expanded(
-                    child: _buildMetricTile(context, 'Emergency Triage', '2', Icons.error_outline, AppColors.errorRed),
-                  ),
-                  AppSpacing.gapMd,
-                  Expanded(
-                    child: _buildMetricTile(context, 'AI Flagged Scans', '5', Icons.psychology, AppColors.secondaryCyan),
-                  ),
-                ],
-              ),
-              AppSpacing.gapLg,
-
-              // Patient Queue Search Bar
-              TextField(
-                controller: _searchController,
-                onChanged: (v) => setState(() {}),
-                decoration: InputDecoration(
-                  hintText: 'Search patient name or owner ID...',
-                  prefixIcon: const Icon(Icons.search, color: AppColors.primaryTeal),
-                  fillColor: Colors.black26,
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-              AppSpacing.gapMd,
-
-              // Filter Choice Chips Bar
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    _buildFilterChip('All Queue', 0),
-                    const SizedBox(width: 8),
-                    _buildFilterChip('Checked In', 1),
-                    const SizedBox(width: 8),
-                    _buildFilterChip('AI Flagged', 2),
-                    const SizedBox(width: 8),
-                    _buildFilterChip('Teleconsult', 3),
-                  ],
-                ),
-              ),
-              AppSpacing.gapLg,
-
-              Text('Clinical Patient Queue', style: AppTypography.headlineMedium(context)),
-              AppSpacing.gapMd,
-
-              if (filteredPatients.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.all(32),
-                  child: Center(
-                    child: Text('No patients match the search criteria', style: TextStyle(color: Colors.white54)),
-                  ),
-                )
-              else
-                ...filteredPatients.map(
-                  (patient) => GestureDetector(
-                    onTap: () => _showPatientEHRModal(context, patient),
-                    child: _buildPatientTile(
-                      context,
-                      petName: patient['petName'],
-                      ownerName: patient['ownerName'],
-                      reason: patient['reason'],
-                      time: patient['time'],
-                      status: patient['status'],
-                      statusText: patient['statusText'],
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFilterChip(String label, int index) {
-    final isSelected = _selectedFilterIndex == index;
-    return ChoiceChip(
-      label: Text(label),
-      selected: isSelected,
-      selectedColor: AppColors.primaryTeal,
-      labelStyle: TextStyle(color: isSelected ? Colors.white : Colors.white70, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
-      backgroundColor: Colors.white10,
-      onSelected: (selected) {
-        if (selected) setState(() => _selectedFilterIndex = index);
-      },
-    );
-  }
-
-  Widget _buildMetricTile(BuildContext context, String label, String value, IconData icon, Color color) {
-    return GlassContainer(
-      padding: AppSpacing.paddingSm,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: 6),
-          Text(value, style: AppTypography.headlineLarge(context).copyWith(color: color, fontSize: 22)),
-          Text(label, style: const TextStyle(fontSize: 10, color: Colors.white70)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPatientTile(
-    BuildContext context, {
-    required String petName,
-    required String ownerName,
-    required String reason,
-    required String time,
-    required StatusType status,
-    required String statusText,
-  }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.md),
-      child: GlassContainer(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(petName, style: AppTypography.titleLarge(context)),
-                ),
-                StatusChip(label: statusText, type: status),
-              ],
-            )
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: AppColors.primaryTeal,
+          labelColor: AppColors.primaryTeal,
+          unselectedLabelColor: Colors.grey,
+          tabs: const [
+            Tab(text: 'Appointments'),
+            Tab(text: 'Patients EHR'),
+            Tab(text: 'Rx Builder'),
+            Tab(text: 'Calendar'),
           ],
         ),
       ),
+      drawer: const AppDrawer(currentRoute: AppRoutes.vetDashboard),
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: AppColors.primaryTeal,
+        foregroundColor: Colors.white,
+        onPressed: _showPrescriptionBuilderModal,
+        icon: const Icon(Icons.medication),
+        label: const Text('New Digital Rx'),
+      ),
+      body: Column(
+        children: [
+          Container(
+            padding: AppSpacing.paddingMd,
+            color: AppColors.primaryTeal.withOpacity(0.06),
+            child: Row(
+              children: [
+                Expanded(child: _buildMetricItem('Today Consults', '12', Icons.calendar_month, AppColors.primaryTeal)),
+                AppSpacing.gapSm,
+                Expanded(child: _buildMetricItem('Emergency Triage', '2', Icons.emergency, AppColors.errorRed)),
+                AppSpacing.gapSm,
+                Expanded(child: _buildMetricItem('AI Scans', '5', Icons.psychology, AppColors.secondaryCyan)),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: TextField(
+              controller: _searchController,
+              decoration: const InputDecoration(
+                hintText: 'Search patient pet name or owner phone...',
+                prefixIcon: Icon(Icons.search, color: AppColors.primaryTeal),
+                border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+              ),
+              onChanged: (v) => setState(() => _searchQuery = v.trim().toLowerCase()),
+            ),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                ListView(
+                  padding: AppSpacing.paddingLg,
+                  children: [
+                    ..._appointments.where((a) => _searchQuery.isEmpty || a['pet'].toString().toLowerCase().contains(_searchQuery)).map((apt) {
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        child: ListTile(
+                          leading: const CircleAvatar(
+                            backgroundColor: AppColors.primaryTeal,
+                            child: Icon(Icons.pets, color: Colors.white),
+                          ),
+                          title: Text(apt['pet'] as String, style: const TextStyle(fontWeight: FontWeight.bold)),
+                          subtitle: Text('Owner: ${apt['owner']} • ${apt['time']}\nType: ${apt['type']}'),
+                          isThreeLine: true,
+                          trailing: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryTeal.withOpacity(0.12),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(apt['status'] as String, style: const TextStyle(fontSize: 10, color: AppColors.primaryTeal, fontWeight: FontWeight.bold)),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+                ListView(
+                  padding: AppSpacing.paddingLg,
+                  children: [
+                    ListTile(
+                      leading: const CircleAvatar(backgroundColor: AppColors.primaryTeal, child: Icon(Icons.folder_shared, color: Colors.white)),
+                      title: const Text('Luna (Golden Retriever)', style: TextStyle(fontWeight: FontWeight.bold)),
+                      subtitle: const Text('Microchip #985141 • Vaccinated Up-to-Date'),
+                      trailing: ElevatedButton(
+                        style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryTeal, foregroundColor: Colors.white),
+                        onPressed: () => context.go(AppRoutes.healthPassport),
+                        child: const Text('Open EHR'),
+                      ),
+                    ),
+                    const Divider(),
+                    ListTile(
+                      leading: const CircleAvatar(backgroundColor: AppColors.primaryTeal, child: Icon(Icons.folder_shared, color: Colors.white)),
+                      title: const Text('Milo (British Shorthair)', style: TextStyle(fontWeight: FontWeight.bold)),
+                      subtitle: const Text('Microchip #441092 • Indoor Cat'),
+                      trailing: ElevatedButton(
+                        style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryTeal, foregroundColor: Colors.white),
+                        onPressed: () => context.go(AppRoutes.healthPassport),
+                        child: const Text('Open EHR'),
+                      ),
+                    ),
+                  ],
+                ),
+                Center(
+                  child: Padding(
+                    padding: AppSpacing.paddingLg,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.medication_liquid, size: 64, color: AppColors.primaryTeal),
+                        AppSpacing.gapLg,
+                        const Text('Digital Prescription & Dosage Generator', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                        AppSpacing.gapSm,
+                        const Text('Issue official digital prescriptions backed by DRF medical ledger.', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)),
+                        AppSpacing.gapLg,
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryTeal, foregroundColor: Colors.white),
+                          onPressed: _showPrescriptionBuilderModal,
+                          icon: const Icon(Icons.add),
+                          label: const Text('Create New Digital Prescription'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                ListView(
+                  padding: AppSpacing.paddingLg,
+                  children: [
+                    Container(
+                      padding: AppSpacing.paddingMd,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      child: const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('July 2026 Clinical Schedule', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                              Icon(Icons.calendar_month, color: AppColors.primaryTeal),
+                            ],
+                          ),
+                          SizedBox(height: 12),
+                          ListTile(
+                            leading: CircleAvatar(backgroundColor: AppColors.primaryTeal, child: Text('31', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
+                            title: Text('Today - 3 Scheduled Consults'),
+                            subtitle: Text('First consult at 10:30 AM'),
+                          ),
+                          ListTile(
+                            leading: CircleAvatar(backgroundColor: Colors.grey, child: Text('01', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
+                            title: Text('Tomorrow - 5 Scheduled Consults'),
+                            subtitle: Text('Includes 2 AI Scan reviews'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMetricItem(String label, String value, IconData icon, Color color) {
+    return Column(
+      children: [
+        Icon(icon, color: color, size: 20),
+        const SizedBox(height: 2),
+        Text(value, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: color)),
+        Text(label, style: const TextStyle(fontSize: 10, color: Colors.grey), overflow: TextOverflow.ellipsis),
+      ],
     );
   }
 }

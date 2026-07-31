@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_typography.dart';
-import '../../../core/repositories/pets_repository.dart';
-import '../../../core/widgets/glass_container.dart';
-import '../../../core/widgets/status_chip.dart';
+import '../../../core/routing/app_router.dart';
+import '../../../core/widgets/app_drawer.dart';
 
 class HealthPassportScreen extends StatefulWidget {
   const HealthPassportScreen({super.key});
@@ -13,26 +12,112 @@ class HealthPassportScreen extends StatefulWidget {
   State<HealthPassportScreen> createState() => _HealthPassportScreenState();
 }
 
-class _HealthPassportScreenState extends State<HealthPassportScreen> {
-  final PetsRepository _petsRepository = PetsRepository();
-  Map<String, dynamic> _passportData = {};
-  bool _isLoading = true;
-  int _selectedTabIndex = 0;
+class _HealthPassportScreenState extends State<HealthPassportScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  final TextEditingController _searchController = TextEditingController();
+
+  String _searchQuery = '';
+
+  final List<Map<String, dynamic>> _vaccines = [
+    {
+      'title': 'Rabies 3-Year Vaccine',
+      'date': 'Jan 15, 2025',
+      'expires': 'Jan 15, 2028',
+      'vet': 'Dr. Sarah Jenkins (City Vet)',
+      'status': 'Up-to-Date',
+      'batch': 'RB-984210',
+    },
+    {
+      'title': 'DHPP Core Booster',
+      'date': 'Nov 10, 2024',
+      'expires': 'Nov 10, 2025',
+      'vet': 'Dr. Sarah Jenkins (City Vet)',
+      'status': 'Up-to-Date',
+      'batch': 'DH-441092',
+    },
+    {
+      'title': 'Bordetella Oral Vaccine',
+      'date': 'Jun 02, 2024',
+      'expires': 'Jun 02, 2025',
+      'vet': 'Paws & Claws Clinic',
+      'status': 'Pending Booster',
+      'batch': 'BO-110293',
+    },
+  ];
+
+  final List<Map<String, dynamic>> _medications = [
+    {
+      'name': 'Heartgard Plus (Ivermectin)',
+      'dosage': '1 Chewable / Month',
+      'prescribed': 'Dr. Sarah Jenkins',
+      'refills': '3 Remaining',
+    },
+    {
+      'name': 'NexGard Flea & Tick',
+      'dosage': '1 Tablet / Month',
+      'prescribed': 'Dr. Sarah Jenkins',
+      'refills': '5 Remaining',
+    },
+  ];
+
+  final List<Map<String, dynamic>> _documents = [
+    {
+      'title': 'Official Health Certificate.pdf',
+      'size': '1.2 MB',
+      'date': 'May 12, 2026',
+    },
+    {
+      'title': 'Bloodwork CBC Diagnostic Report.pdf',
+      'size': '3.4 MB',
+      'date': 'Apr 02, 2026',
+    },
+  ];
 
   @override
   void initState() {
     super.initState();
-    _loadHealthPassport();
+    _tabController = TabController(length: 4, vsync: this);
   }
 
-  Future<void> _loadHealthPassport() async {
-    final data = await _petsRepository.getHealthPassport('pet_001');
-    if (mounted) {
-      setState(() {
-        _passportData = data;
-        _isLoading = false;
-      });
-    }
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _showQrCodeModal() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.qr_code, color: AppColors.primaryTeal),
+            SizedBox(width: 8),
+            Text('Passport QR Check-In'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.primaryTeal, width: 2),
+              ),
+              child: const Icon(Icons.qr_code_2, size: 160, color: AppColors.primaryTeal),
+            ),
+            AppSpacing.gapMd,
+            const Text('Scan this QR code at veterinary clinics to load Luna\'s verified medical passport instantly.', textAlign: TextAlign.center, style: TextStyle(fontSize: 13, color: Colors.grey)),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+        ],
+      ),
+    );
   }
 
   @override
@@ -42,193 +127,236 @@ class _HealthPassportScreenState extends State<HealthPassportScreen> {
         title: const Text('Digital Health Passport'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.qr_code_scanner),
+            tooltip: 'QR Passport',
+            onPressed: _showQrCodeModal,
+          ),
+          IconButton(
             icon: const Icon(Icons.share),
             tooltip: 'Share Passport',
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Health Passport QR Link copied to clipboard')),
+                const SnackBar(content: Text('Health Passport link & PDF export ready for sharing.')),
               );
             },
           ),
         ],
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: AppColors.primaryTeal,
+          labelColor: AppColors.primaryTeal,
+          unselectedLabelColor: Colors.grey,
+          tabs: const [
+            Tab(text: 'Vaccines'),
+            Tab(text: 'Meds & History'),
+            Tab(text: 'Timeline'),
+            Tab(text: 'Documents'),
+          ],
+        ),
       ),
+      drawer: const AppDrawer(currentRoute: AppRoutes.healthPassport),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: AppColors.primaryTeal,
         foregroundColor: Colors.white,
         onPressed: () {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Generating Verified EHR Medical Records PDF...')),
+            const SnackBar(content: Text('Document upload picker open. Select PDF or image.')),
           );
         },
-        icon: const Icon(Icons.picture_as_pdf),
-        label: const Text('Export Verified EHR'),
+        icon: const Icon(Icons.upload_file),
+        label: const Text('Upload Report'),
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.primaryTeal))
-          : RefreshIndicator(
-              onRefresh: _loadHealthPassport,
-              color: AppColors.primaryTeal,
-              child: SingleChildScrollView(
-                padding: AppSpacing.paddingLg,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Search vaccine, record, document...',
+                prefixIcon: const Icon(Icons.search, color: AppColors.primaryTeal),
+                suffixIcon: _searchQuery.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() => _searchQuery = '');
+                        },
+                      )
+                    : null,
+                border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+              ),
+              onChanged: (val) => setState(() => _searchQuery = val.trim().toLowerCase()),
+            ),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                ListView(
+                  padding: AppSpacing.paddingLg,
                   children: [
-                    GlassContainer(
-                      padding: AppSpacing.paddingLg,
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              const CircleAvatar(
-                                radius: 36,
-                                backgroundColor: AppColors.primaryTeal,
-                                child: Icon(Icons.pets, size: 40, color: Colors.white),
-                              ),
-                              AppSpacing.gapMd,
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(_passportData['pet_name']?.toString() ?? 'Luna', style: AppTypography.headlineMedium(context)),
-                                    Text(_passportData['breed']?.toString() ?? 'Canine • Golden Retriever • 3 yrs 2 mos', style: AppTypography.bodyMedium(context)),
-                                    Text('Microchip ID: ${_passportData['microchip_id'] ?? '985141002938102'}', style: AppTypography.labelLarge(context)),
-                                  ],
-                                ),
-                              ),
-                              const StatusChip(label: 'Verified EHR', type: StatusType.success),
-                            ],
+                    ..._vaccines.where((v) => _searchQuery.isEmpty || v['title'].toString().toLowerCase().contains(_searchQuery)).map((v) {
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        child: ListTile(
+                          leading: const CircleAvatar(
+                            backgroundColor: AppColors.primaryTeal,
+                            child: Icon(Icons.verified, color: Colors.white),
                           ),
-                          AppSpacing.gapLg,
-                          Column(
+                          title: Text(v['title'] as String, style: const TextStyle(fontWeight: FontWeight.bold)),
+                          subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text('Core Vaccine Compliance', style: AppTypography.titleMedium(context)),
-                                  const Text('100% Up to Date', style: TextStyle(color: AppColors.successGreen, fontWeight: FontWeight.bold)),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(6),
-                                child: const LinearProgressIndicator(
-                                  value: 1.0,
-                                  minHeight: 8,
-                                  backgroundColor: Colors.white12,
-                                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.successGreen),
-                                ),
-                              ),
+                              Text('${v['date']} • Expires: ${v['expires']}'),
+                              Text('Batch: ${v['batch']} • ${v['vet']}', style: const TextStyle(fontSize: 11, color: Colors.grey)),
                             ],
+                          ),
+                          trailing: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryTeal.withOpacity(0.12),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(v['status'] as String, style: const TextStyle(color: AppColors.primaryTeal, fontSize: 11, fontWeight: FontWeight.bold)),
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+                ListView(
+                  padding: AppSpacing.paddingLg,
+                  children: [
+                    Text('Active Medications', style: AppTypography.headlineMedium(context)),
+                    AppSpacing.gapMd,
+                    ..._medications.map((m) {
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        child: ListTile(
+                          leading: const CircleAvatar(
+                            backgroundColor: AppColors.secondaryCyan,
+                            child: Icon(Icons.medication, color: Colors.white),
+                          ),
+                          title: Text(m['name'] as String, style: const TextStyle(fontWeight: FontWeight.bold)),
+                          subtitle: Text('Dosage: ${m['dosage']} • Refills: ${m['refills']}'),
+                        ),
+                      );
+                    }),
+                    AppSpacing.gapLg,
+                    Text('Allergies & Dietary Constraints', style: AppTypography.headlineMedium(context)),
+                    AppSpacing.gapMd,
+                    Container(
+                      padding: AppSpacing.paddingMd,
+                      decoration: BoxDecoration(
+                        color: AppColors.tertiaryCoral.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppColors.tertiaryCoral.withOpacity(0.3)),
+                      ),
+                      child: const Row(
+                        children: [
+                          Icon(Icons.warning_amber_rounded, color: AppColors.tertiaryCoral),
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: Text('Allergic to Artificial Flavoring & Dairy. Grain-free salmon diet prescribed.'),
                           ),
                         ],
                       ),
                     ),
-                    AppSpacing.gapLg,
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          _buildFilterChip('All Immunizations', 0),
-                          const SizedBox(width: 8),
-                          _buildFilterChip('Medical Ledger', 1),
-                          const SizedBox(width: 8),
-                          _buildFilterChip('Surgeries & Care', 2),
-                        ],
-                      ),
-                    ),
-                    AppSpacing.gapLg,
-                    Text('Vaccination History', style: AppTypography.headlineMedium(context)),
-                    AppSpacing.gapMd,
-                    _buildRecordItem(
-                      context,
-                      title: 'Rabies 3-Year Vaccine',
-                      date: 'Administered: Jan 15, 2025 • Expires: Jan 15, 2028',
-                      vet: 'Dr. Sarah Jenkins, DVM',
-                      isVerified: true,
-                    ),
-                    _buildRecordItem(
-                      context,
-                      title: 'DHPP Core Booster',
-                      date: 'Administered: Nov 10, 2024 • Expires: Nov 10, 2025',
-                      vet: 'Dr. Sarah Jenkins, DVM',
-                      isVerified: true,
-                    ),
-                    _buildRecordItem(
-                      context,
-                      title: 'Bordetella Oral Vaccine',
-                      date: 'Administered: Jun 02, 2024 • Expires: Jun 02, 2025',
-                      vet: 'Metro Pet Care Clinic',
-                      isVerified: true,
-                    ),
-                    AppSpacing.gapLg,
-                    Text('Medical & Surgery Ledger', style: AppTypography.headlineMedium(context)),
-                    AppSpacing.gapMd,
-                    _buildRecordItem(
-                      context,
-                      title: 'Routine Dental Scaling & Polish',
-                      date: 'Performed: Aug 14, 2024',
-                      vet: 'Metro Pet Care Clinic',
-                      isVerified: true,
-                    ),
-                    const SizedBox(height: 80),
                   ],
                 ),
-              ),
+                ListView(
+                  padding: AppSpacing.paddingLg,
+                  children: [
+                    _buildTimelineNode(context, 'May 12, 2026', 'Annual Health Checkup & Bloodwork', 'Complete CBC panel within normal limits. Dr. Sarah Jenkins.'),
+                    _buildTimelineNode(context, 'Jan 15, 2025', 'Rabies 3-Year Vaccine Administered', 'Vaccine batch #RB-984210. Valid through 2028.'),
+                    _buildTimelineNode(context, 'Nov 10, 2024', 'DHPP Core Booster Shot', 'No adverse reactions noted. Hydration optimal.'),
+                    _buildTimelineNode(context, 'Jun 02, 2024', 'Dental Scaling & Polishing', 'Routine cleaning under sedation. Teeth clean.'),
+                  ],
+                ),
+                ListView(
+                  padding: AppSpacing.paddingLg,
+                  children: [
+                    ..._documents.map((doc) {
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        child: ListTile(
+                          leading: const CircleAvatar(
+                            backgroundColor: AppColors.primaryTeal,
+                            child: Icon(Icons.picture_as_pdf, color: Colors.white),
+                          ),
+                          title: Text(doc['title'] as String, style: const TextStyle(fontWeight: FontWeight.bold)),
+                          subtitle: Text('${doc['size']} • Uploaded ${doc['date']}'),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.download, color: AppColors.primaryTeal),
+                                onPressed: () {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Downloading ${doc['title']}...')),
+                                  );
+                                },
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.share, color: Colors.grey),
+                                onPressed: () {},
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+              ],
             ),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildFilterChip(String label, int index) {
-    final isSelected = _selectedTabIndex == index;
-    return ChoiceChip(
-      label: Text(label),
-      selected: isSelected,
-      selectedColor: AppColors.primaryTeal,
-      labelStyle: TextStyle(color: isSelected ? Colors.white : Colors.white70, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
-      backgroundColor: Colors.white10,
-      onSelected: (selected) {
-        if (selected) setState(() => _selectedTabIndex = index);
-      },
-    );
-  }
-
-  Widget _buildRecordItem(
-    BuildContext context, {
-    required String title,
-    required String date,
-    required String vet,
-    required bool isVerified,
-  }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.md),
-      child: GlassContainer(
-        padding: AppSpacing.paddingMd,
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
+  Widget _buildTimelineNode(BuildContext context, String date, String title, String description) {
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(
+            children: [
+              Container(
+                width: 12,
+                height: 12,
+                decoration: const BoxDecoration(color: AppColors.primaryTeal, shape: BoxShape.circle),
+              ),
+              Expanded(
+                child: Container(width: 2, color: AppColors.primaryTeal.withOpacity(0.3)),
+              ),
+            ],
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              padding: AppSpacing.paddingMd,
               decoration: BoxDecoration(
-                color: AppColors.primaryTeal.withOpacity(0.15),
-                shape: BoxShape.circle,
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey.shade300),
               ),
-              child: const Icon(Icons.verified, color: AppColors.primaryTeal, size: 24),
-            ),
-            AppSpacing.gapMd,
-            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: AppTypography.titleLarge(context)),
+                  Text(date, style: const TextStyle(fontSize: 11, color: AppColors.primaryTeal, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 2),
-                  Text(date, style: AppTypography.bodyMedium(context)),
-                  Text(vet, style: AppTypography.labelLarge(context)),
+                  Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                  const SizedBox(height: 4),
+                  Text(description, style: const TextStyle(fontSize: 13, color: Colors.grey)),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right, color: AppColors.lightOutlineVariant),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

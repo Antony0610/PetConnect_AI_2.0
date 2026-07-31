@@ -42,8 +42,7 @@ class ApiClient {
         onError: (DioException e, handler) async {
           AppLogger.error('❌ Network Exception: ${e.message}', e, e.stackTrace);
           if (e.response?.statusCode == 401) {
-            // Token refresh logic placeholder
-            AppLogger.warning('Token expired, triggering refresh sequence...');
+            AppLogger.warning('SimpleJWT Token expired or unauthorized access.');
           }
           return handler.next(e);
         },

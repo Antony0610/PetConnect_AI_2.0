@@ -7,19 +7,20 @@ import '../../../core/routing/app_router.dart';
 import '../data/auth_repository.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final String? initialRole;
+
+  const LoginScreen({super.key, this.initialRole});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _nameController = TextEditingController();
   final _authRepository = AuthRepository();
 
+  late String _selectedRole;
   bool _isLoading = false;
   bool _obscurePassword = true;
   bool _rememberMe = true;
@@ -28,15 +29,15 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _selectedRole = widget.initialRole ?? 'pet_owner';
+    _emailController.text = 'owner@petconnect.ai';
+    _passwordController.text = 'Password123!';
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _nameController.dispose();
     super.dispose();
   }
 
@@ -45,7 +46,12 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     final password = _passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
-      setState(() => _errorMessage = 'Please enter valid email credentials and password.');
+      setState(() => _errorMessage = 'Please enter valid email address and password.');
+      return;
+    }
+
+    if (!email.contains('@')) {
+      setState(() => _errorMessage = 'Please enter a valid email format.');
       return;
     }
 
@@ -54,7 +60,11 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       _errorMessage = null;
     });
 
-    final result = await _authRepository.login(email: email, password: password);
+    final result = await _authRepository.login(
+      email: email,
+      password: password,
+      role: _selectedRole,
+    );
 
     if (!mounted) return;
 
@@ -62,11 +72,10 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
     if (result['success'] == true) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Authentication successful! Token acquired.')),
+        SnackBar(content: Text('Authentication successful as ${_getRoleTitle(_selectedRole)}!')),
       );
 
-      final role = result['role'] ?? 'pet_owner';
-      switch (role) {
+      switch (_selectedRole) {
         case 'vet':
           context.go(AppRoutes.vetDashboard);
           break;
@@ -86,21 +95,32 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     }
   }
 
+  String _getRoleTitle(String role) {
+    switch (role) {
+      case 'vet':
+        return 'Veterinarian';
+      case 'volunteer':
+        return 'Volunteer / Rescue';
+      case 'admin':
+        return 'Administrator';
+      case 'pet_owner':
+      default:
+        return 'Pet Owner';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('PetConnect Identity Portal'),
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: AppColors.primaryTeal,
-          labelColor: AppColors.primaryTeal,
-          unselectedLabelColor: Colors.grey,
-          tabs: const [
-            Tab(text: 'Sign In'),
-            Tab(text: 'Create Account'),
-          ],
-        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.badge_outlined),
+            tooltip: 'Choose Portal Role',
+            onPressed: () => context.go(AppRoutes.roleSelection),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: AppSpacing.paddingLg,
@@ -122,6 +142,37 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               ),
             ),
             AppSpacing.gapLg,
+            DropdownButtonFormField<String>(
+              value: _selectedRole,
+              decoration: const InputDecoration(
+                labelText: 'Active Sign-In Role',
+                prefixIcon: Icon(Icons.shield_outlined, color: AppColors.primaryTeal),
+                border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+              ),
+              items: const [
+                DropdownMenuItem(value: 'pet_owner', child: Text('Pet Owner Portal')),
+                DropdownMenuItem(value: 'vet', child: Text('Veterinarian Clinical Portal')),
+                DropdownMenuItem(value: 'volunteer', child: Text('Volunteer & Rescue Portal')),
+                DropdownMenuItem(value: 'admin', child: Text('Administrator Command Portal')),
+              ],
+              onChanged: (val) {
+                if (val != null) {
+                  setState(() {
+                    _selectedRole = val;
+                    if (val == 'vet') {
+                      _emailController.text = 'vet@petconnect.ai';
+                    } else if (val == 'volunteer') {
+                      _emailController.text = 'rescue@petconnect.ai';
+                    } else if (val == 'admin') {
+                      _emailController.text = 'admin@petconnect.ai';
+                    } else {
+                      _emailController.text = 'owner@petconnect.ai';
+                    }
+                  });
+                }
+              },
+            ),
+            AppSpacing.gapMd,
             if (_errorMessage != null) ...[
               Container(
                 padding: AppSpacing.paddingMd,
@@ -176,11 +227,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 const Text('Remember Credentials'),
                 const Spacer(),
                 TextButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Password reset link dispatched to account email.')),
-                    );
-                  },
+                  onPressed: () => context.go(AppRoutes.forgotPassword),
                   child: const Text('Forgot Password?', style: TextStyle(color: AppColors.primaryTeal)),
                 ),
               ],
@@ -198,14 +245,20 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 onPressed: _isLoading ? null : _handleAuthentication,
                 child: _isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Authenticate & Launch Portal', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    : Text('Authenticate as ${_getRoleTitle(_selectedRole)}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               ),
             ),
             AppSpacing.gapMd,
             Center(
-              child: TextButton(
-                onPressed: () => context.go(AppRoutes.roleSelection),
-                child: const Text('Switch Role Portal', style: TextStyle(color: AppColors.primaryTeal)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Don\'t have an account?'),
+                  TextButton(
+                    onPressed: () => context.go(AppRoutes.register),
+                    child: const Text('Create Account', style: TextStyle(color: AppColors.primaryTeal, fontWeight: FontWeight.bold)),
+                  ),
+                ],
               ),
             ),
           ],

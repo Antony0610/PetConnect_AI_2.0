@@ -5,6 +5,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_typography.dart';
 import '../../../core/routing/app_router.dart';
+import '../../../core/security/secure_storage_service.dart';
 import '../../../core/widgets/glass_container.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -18,13 +19,40 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _navigateToNext();
+    _checkSessionAndNavigate();
   }
 
-  void _navigateToNext() async {
-    await Future.delayed(const Duration(milliseconds: 2800));
-    if (mounted) {
+  void _checkSessionAndNavigate() async {
+    await Future.delayed(const Duration(milliseconds: 1800));
+    if (!mounted) return;
+
+    final storage = await SecureStorageService.getInstance();
+    final token = storage.getAuthToken();
+    final hasSeenOnboarding = storage.getHasSeenOnboarding();
+    final role = storage.getSelectedRole();
+
+    if (!mounted) return;
+
+    if (token != null && token.isNotEmpty) {
+      switch (role) {
+        case 'vet':
+          context.go(AppRoutes.vetDashboard);
+          break;
+        case 'volunteer':
+          context.go(AppRoutes.volunteerDashboard);
+          break;
+        case 'admin':
+          context.go(AppRoutes.adminDashboard);
+          break;
+        case 'pet_owner':
+        default:
+          context.go(AppRoutes.petOwnerDashboard);
+          break;
+      }
+    } else if (!hasSeenOnboarding) {
       context.go(AppRoutes.onboarding);
+    } else {
+      context.go(AppRoutes.login);
     }
   }
 
@@ -64,8 +92,8 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
               )
                   .animate()
-                  .scale(duration: 800.ms, curve: Curves.elasticOut)
-                  .shimmer(delay: 800.ms, duration: 1200.ms),
+                  .scale(duration: 600.ms, curve: Curves.easeOut)
+                  .shimmer(delay: 500.ms, duration: 800.ms),
               AppSpacing.gapLg,
               Text(
                 'PetConnect AI',
@@ -73,7 +101,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   color: Colors.white,
                   letterSpacing: -1.0,
                 ),
-              ).animate().fadeIn(delay: 400.ms, duration: 600.ms).slideY(begin: 0.2, end: 0),
+              ).animate().fadeIn(delay: 300.ms, duration: 400.ms).slideY(begin: 0.2, end: 0),
               AppSpacing.gapSm,
               Text(
                 'Medical-Grade Intelligence for Pet Ecosystems',
@@ -81,7 +109,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   color: AppColors.secondaryFixedDim,
                   letterSpacing: 0.5,
                 ),
-              ).animate().fadeIn(delay: 700.ms, duration: 600.ms),
+              ).animate().fadeIn(delay: 500.ms, duration: 400.ms),
               AppSpacing.gapXl,
               const SizedBox(
                 width: 32,
@@ -90,7 +118,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   strokeWidth: 2.5,
                   valueColor: AlwaysStoppedAnimation<Color>(AppColors.secondaryCyan),
                 ),
-              ).animate().fadeIn(delay: 1200.ms),
+              ).animate().fadeIn(delay: 800.ms),
             ],
           ),
         ),

@@ -1,42 +1,58 @@
 import 'package:go_router/go_router.dart';
 
 import '../../features/admin/presentation/admin_command_center_screen.dart';
+import '../../features/ai_assistant/presentation/interactive_ai_chat_screen.dart';
+import '../../features/ai_scan/presentation/ai_scan_screen.dart';
+import '../../features/auth/presentation/forgot_password_screen.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../features/auth/presentation/onboarding_screen.dart';
 import '../../features/auth/presentation/profile_setup_screen.dart';
+import '../../features/auth/presentation/register_screen.dart';
 import '../../features/auth/presentation/role_selection_screen.dart';
 import '../../features/auth/presentation/splash_screen.dart';
 import '../../features/health_passport/presentation/health_passport_screen.dart';
+import '../../features/pet_owner/presentation/add_pet_screen.dart';
+import '../../features/pet_owner/presentation/nearby_vets_screen.dart';
+import '../../features/pet_owner/presentation/pet_detail_screen.dart';
 import '../../features/pet_owner/presentation/pet_owner_dashboard_screen.dart';
+import '../../features/pet_owner/presentation/settings_screen.dart';
 import '../../features/rescue/presentation/live_rescue_map_screen.dart';
 import '../../features/rescue/presentation/rescue_missions_hub_screen.dart';
 import '../../features/smart_collar/presentation/live_tracking_screen.dart';
-import '../../features/smart_collar/presentation/smart_collar_setup_screen.dart';
+import '../../features/smart_collar/presentation/smart_collar_screen.dart';
 import '../../features/vet/presentation/clinical_dashboard_screen.dart';
 import '../../features/volunteer/presentation/volunteer_dashboard_screen.dart';
-import '../../features/ai_assistant/presentation/interactive_ai_chat_screen.dart';
-import '../../features/ai_scan/presentation/ai_scan_screen.dart';
+import '../widgets/global_search_screen.dart';
+import '../widgets/notifications_screen.dart';
 
 abstract class AppRoutes {
   static const String splash = '/';
   static const String onboarding = '/onboarding';
   static const String roleSelection = '/role-selection';
   static const String login = '/login';
+  static const String register = '/register';
+  static const String forgotPassword = '/forgot-password';
   static const String profileSetup = '/profile-setup';
-  
+
   static const String petOwnerDashboard = '/pet-owner';
+  static const String addPet = '/pet-owner/add-pet';
+  static const String petDetail = '/pet-owner/pet-detail';
+  static const String nearbyVets = '/pet-owner/nearby-vets';
   static const String healthPassport = '/pet-owner/health-passport';
   static const String smartCollarSetup = '/pet-owner/smart-collar';
   static const String liveTracking = '/pet-owner/live-tracking';
   static const String aiScan = '/pet-owner/ai-scan';
   static const String aiChat = '/pet-owner/ai-chat';
-  
+
   static const String vetDashboard = '/vet';
   static const String volunteerDashboard = '/volunteer';
   static const String rescueHub = '/volunteer/rescue';
   static const String rescueMap = '/volunteer/rescue-map';
-  
+
   static const String adminDashboard = '/admin';
+  static const String settings = '/settings';
+  static const String notifications = '/notifications';
+  static const String globalSearch = '/global-search';
 }
 
 final GoRouter appRouter = GoRouter(
@@ -56,7 +72,21 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.login,
-      builder: (context, state) => const LoginScreen(),
+      builder: (context, state) {
+        final role = state.uri.queryParameters['role'];
+        return LoginScreen(initialRole: role);
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.register,
+      builder: (context, state) {
+        final role = state.uri.queryParameters['role'];
+        return RegisterScreen(initialRole: role);
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.forgotPassword,
+      builder: (context, state) => const ForgotPasswordScreen(),
     ),
     GoRoute(
       path: AppRoutes.profileSetup,
@@ -67,12 +97,27 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const PetOwnerDashboardScreen(),
     ),
     GoRoute(
+      path: AppRoutes.addPet,
+      builder: (context, state) => const AddPetScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.petDetail,
+      builder: (context, state) {
+        final petId = state.uri.queryParameters['id'] ?? 'pet_1';
+        return PetDetailScreen(petId: petId);
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.nearbyVets,
+      builder: (context, state) => const NearbyVetsScreen(),
+    ),
+    GoRoute(
       path: AppRoutes.healthPassport,
       builder: (context, state) => const HealthPassportScreen(),
     ),
     GoRoute(
       path: AppRoutes.smartCollarSetup,
-      builder: (context, state) => const SmartCollarSetupScreen(),
+      builder: (context, state) => const SmartCollarScreen(),
     ),
     GoRoute(
       path: AppRoutes.liveTracking,
@@ -105,6 +150,18 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.adminDashboard,
       builder: (context, state) => const AdminCommandCenterScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.settings,
+      builder: (context, state) => const SettingsScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.notifications,
+      builder: (context, state) => const NotificationsScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.globalSearch,
+      builder: (context, state) => const GlobalSearchScreen(),
     ),
   ],
 );
