@@ -5,26 +5,27 @@ import '../network/api_service.dart';
 class AIRepository {
   /// Submit AI disease scan image for triage
   Future<Map<String, dynamic>> analyzeImage(String filePath, String scanMode) async {
-    final response = await ApiService.uploadFile('/ai-scan/analyze/', filePath, 'image');
+    final response = await ApiService.uploadFile('/ai/analyze/', filePath, 'image');
     if (response.statusCode == 200 || response.statusCode == 201) {
       return jsonDecode(response.body);
     }
     return {
       'success': false,
-      'confidence': 0.94,
-      'condition': 'Mild Canine Dermatitis',
-      'recommendations': 'Apply topical antiseptic gel and consult a licensed veterinarian.',
+      'message': 'Failed to process AI vision scan.',
+      'confidence': 0.0,
+      'condition': 'Scan Processing Error',
+      'recommendations': 'Retry scan or consult a licensed veterinarian.',
     };
   }
 
   /// Query Veterinary RAG Chat Assistant
   Future<Map<String, dynamic>> queryMedicalAssistant(String prompt) async {
-    final response = await ApiService.post('/ai-scan/chat/', {'prompt': prompt});
+    final response = await ApiService.post('/ai/assistant/chat/', {'prompt': prompt});
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     }
     return {
-      'response': 'Based on clinical guidelines, monitor hydration levels and maintain balanced dietary intake.'
+      'response': 'Unable to connect to AI Assistant service. Verify internet connectivity.'
     };
   }
 
