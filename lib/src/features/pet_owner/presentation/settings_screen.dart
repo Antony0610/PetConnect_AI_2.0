@@ -22,7 +22,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _biometricLock = true;
   String _selectedLanguage = 'English';
 
-  final List<String> _languages = ['English', 'Spanish', 'French', 'German'];
+  final List<String> _languages = ['English', 'Malayalam', 'Hindi'];
 
   @override
   Widget build(BuildContext context) {
